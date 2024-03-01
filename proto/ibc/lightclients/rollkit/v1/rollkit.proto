@@ -23,7 +23,7 @@ message Header {
   // additional data needed to query the VerifyMembership RPC on the DA light client
   DaData da_data = 2 [
     (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"da_data\"";
+    (gogoproto.moretags) = "yaml:\"da_data\""
   ];
 }
 
