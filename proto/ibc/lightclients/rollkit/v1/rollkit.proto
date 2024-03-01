@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package ibc.lightclients.rollkit.v1;
+
+import "gogoproto/gogo.proto";
+import "ibc/lightclients/tendermint/v1/tendermint.proto";
+
+// Header defines the structure of the header for Rollkit light clients
+// operating on a Data Availability layer. It encapsulates all the information
+// necessary to update a client from a trusted Rollkit rollup ConsensusState.
+// Rollkit headers are essentially the same as Tendermint headers, but require
+// additional data in order to query the VerifyMembership RPC on the DA light client.
+// For that reason the Header structure comprises of a Tendermint header and
+// the extra data required to query the RPC endpoint on update state.
+message Header {
+  option (gogoproto.goproto_getters) = false;
+
+  // the Tendermint header
+  ibc.lightclients.tendermint.v1.Header tendermint_header = 1 [
+    (gogoproto.nullable) = false;
+    (gogoproto.moretags) = "yaml:\"tendermint_header\""
+  ];
+  // additional data needed to query the VerifyMembership RPC on the DA light client
+  DaData da_data = 2 [
+    (gogoproto.nullable) = false;
+    (gogoproto.moretags) = "yaml:\"da_data\""
+  ];
+}
+
+// DaData defines the information needed by Rollkit rollup light
+// client to query the VerifyMembership RPC of the DA light client.
+message DaData {
+  // client ID of the DA light client
+  string client_id = 1;
+  // the proof of inclusion of Rollkit rollup block data in DA block
+  bytes shared_proof = 2;
+}
