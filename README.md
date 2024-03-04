@@ -1,2 +1,3 @@
-# 07-rollkit
+# rollkit-ibc
+
 Rollkit Wasm light client
