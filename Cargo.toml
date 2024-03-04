@@ -46,7 +46,7 @@ cw2 = "1.1.1"
 derive_more = "0.99.17"
 ibc = { git = "https://github.com/cosmos/ibc-rs", rev = "552863ec93", default-features = false } # "0.50.0"
 ibc-core = { git = "https://github.com/cosmos/ibc-rs", rev = "552863ec93", default-features = false } # "0.50.0"
-ibc-proto = { git = "https://github.com/cosmos/ibc-proto-rs.git", rev = "d07679bed968554088cdd1f92eb7b50003800fc1", default-features = false } # "0.42.0"
+ibc-proto = { git = "https://github.com/cosmos/ibc-proto-rs.git", rev = "3adf964d795bf4d53150f3b2ce47feed93121759", default-features = false } # "0.42.0"
 prost = "0.12.3"
 schemars = "0.8.15"
 serde = { version = "1.0", features = ["derive", "rc"] }
