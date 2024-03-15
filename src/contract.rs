@@ -3,9 +3,12 @@ use cosmwasm_std::entry_point;
 use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
 // use cw2::set_contract_version;
 
-use crate::error::ContractError;
-use crate::msg::{InstantiateMsg, SudoMsg, QueryMsg};
 use crate::context::Context;
+use crate::error::ContractError;
+use crate::msg::{InstantiateMsg, QueryMsg, SudoMsg};
+use crate::types::RollkitClient;
+
+pub type RollkitContext<'a> = Context<'a, RollkitClient>;
 
 /*
 // version info for migration info
@@ -20,7 +23,7 @@ pub fn instantiate(
     _info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
-    let mut ctx = Context::new_mut(deps, env)?;
+    let mut ctx = RollkitContext::new_mut(deps, env)?;
 
     let data = ctx.instantiate(msg)?;
 

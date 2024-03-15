@@ -1,7 +1,7 @@
 version: v1
-name: buf.build/informalsystems/sovereign-ibc
+name: buf.build/cosmos/rollkit-ibc
 deps:
-  - buf.build/cosmos/ibc:c805262eb05540e7a4d8723e8b39108e
+  - buf.build/cosmos/ibc:b32ecf3ebbcb45f3b727ae95d9ea317d
   - buf.build/cosmos/gogo-proto
 breaking:
   use:

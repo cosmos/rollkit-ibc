@@ -1,11 +1,11 @@
-use std::str::FromStr;
-use core::fmt::{Debug, Display, Error as FmtError, Formatter};
 use base64::engine::general_purpose;
 use base64::Engine;
+use core::fmt::{Debug, Display, Error as FmtError, Formatter};
+use std::str::FromStr;
 
-use ibc_proto::ibc::lightclients::rollkit::v1::DaData as RawDaData;
 use ibc::core::host::types::identifiers::ClientId;
 use ibc::core::primitives::proto::Protobuf;
+use ibc_proto::ibc::lightclients::rollkit::v1::DaData as RawDaData;
 
 use crate::types::Error;
 
@@ -25,16 +25,17 @@ impl Debug for DaData {
 
 impl Display for DaData {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), FmtError> {
-
-        write!(f, "DaData {{ client_id: {}, shared_proof: {} }}", &self.client_id, &general_purpose::STANDARD.encode(self.shared_proof))
+        write!(
+            f,
+            "DaData {{ client_id: {}, shared_proof: {} }}",
+            &self.client_id,
+            &general_purpose::STANDARD.encode(self.shared_proof)
+        )
     }
 }
 
 impl DaData {
-    pub fn new(
-        client_id: ClientId,
-        shared_proof: Vec<u8>,
-    ) -> Self {
+    pub fn new(client_id: ClientId, shared_proof: Vec<u8>) -> Self {
         Self {
             client_id,
             shared_proof,
@@ -50,10 +51,7 @@ impl TryFrom<RawDaData> for DaData {
     fn try_from(raw: RawDaData) -> Result<Self, Self::Error> {
         let client_id = ClientId::from_str(&raw.client_id).map_err(Error::source)?;
 
-        Ok(Self::new(
-            client_id,
-            raw.shared_proof,
-        ))
+        Ok(Self::new(client_id, raw.shared_proof))
     }
 }
 

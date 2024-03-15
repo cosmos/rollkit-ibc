@@ -5,7 +5,7 @@ use ibc::core::handler::types::error::ContextError;
 use ibc::core::host::types::error::IdentifierError;
 use tendermint_light_client_verifier::Verdict;
 
-/// Defines the error type for Sovereign light client.
+/// Defines the error type for Rollkit light client.
 #[derive(Clone, Debug)]
 pub struct Error {
     /// Error code.

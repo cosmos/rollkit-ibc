@@ -9,15 +9,14 @@ use crate::types::{
     CheckForMisbehaviourMsg, ContractError, ContractResult, ExportMetadataMsg, InstantiateMsg,
     QueryMsg, QueryResponse, StatusMsg, SudoMsg, UpdateStateMsg, UpdateStateOnMisbehaviourMsg,
     VerifyClientMessageMsg, VerifyMembershipMsg, VerifyNonMembershipMsg,
-    VerifyUpgradeAndUpdateStateMsg,
+    VerifyUpgradeAndUpdateStateMsg, ClientMessage,
 };
-use crate::types::{ClientState, ClientMessage};
 
-impl<'a> Context<'a> {
+impl<'a, C: ClientType<'a>> Context<'a, C> {
     pub fn instantiate(&mut self, msg: InstantiateMsg) -> Result<Binary, ContractError> {
         let any = Any::decode(&mut msg.client_state.as_slice())?;
 
-        let client_state = ClientState::try_from(any)?;
+        let client_state = C::ClientState::try_from(any)?;
 
         let any_consensus_state = Any::decode(&mut msg.consensus_state.as_slice())?;
 
@@ -28,7 +27,7 @@ impl<'a> Context<'a> {
         Ok(to_json_binary(&ContractResult::success())?)
     }
 
-    pub fn execute(&mut self, msg: SudoMsg) -> Result<Binary, ContractError> {
+    pub fn sudo(&mut self, msg: SudoMsg) -> Result<Binary, ContractError> {
         let client_id = self.client_id();
 
         let client_state = self.client_state(&client_id)?;

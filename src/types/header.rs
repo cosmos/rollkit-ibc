@@ -1,11 +1,11 @@
-//! Defines the header type for the Sovereign light client
+//! Defines the header type for the Rollkit light client
 
 use core::fmt::{Debug, Display, Error as FmtError, Formatter};
 
 use ibc::clients::tendermint::types::Header as TendermintHeader;
 use ibc::core::client::types::Height;
-use ibc::core::primitives::Timestamp;
 use ibc::core::primitives::proto::{Any, Protobuf};
+use ibc::core::primitives::Timestamp;
 use ibc_proto::ibc::lightclients::rollkit::v1::Header as RawRollkitHeader;
 
 use crate::types::DaData;
@@ -31,8 +31,7 @@ impl Display for Header {
         write!(
             f,
             "Header {{ tendermint_header: {}, da_data: {} }}",
-            &self.tendermint_header,
-            &self.da_data,
+            &self.tendermint_header, &self.da_data,
         )
     }
 }
@@ -48,7 +47,9 @@ impl Header {
 
     /// Checks if the fields of a given header are consistent with the trusted fields of this header.
     pub fn validate_basic(&self) -> Result<(), Error> {
-        self.tendermint_header.validate_basic().map_err(Error::source)
+        self.tendermint_header
+            .validate_basic()
+            .map_err(Error::source)
     }
 }
 

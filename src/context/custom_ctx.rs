@@ -2,33 +2,35 @@ use std::str::FromStr;
 
 use cosmwasm_std::{Deps, DepsMut, Env, Order, Storage};
 use ibc::clients::wasm_types::client_state::ClientState as WasmClientState;
-use ibc::clients::tendermint::client_state::ClientState as TendermintClientState;
-use ibc::core::primitives::proto::{Any, Protobuf};
 use ibc::core::client::context::client_state::ClientStateCommon;
 use ibc::core::client::types::error::ClientError;
 use ibc::core::client::types::Height;
 use ibc::core::host::types::identifiers::ClientId;
 use ibc::core::host::types::path::{
-    iteration_key, ClientStatePath, ClientUpdateHeightPath, ClientUpdateTimePath, ITERATE_CONSENSUS_STATE_PREFIX,
+    iteration_key, ClientStatePath, ClientUpdateHeightPath, ClientUpdateTimePath,
+    ITERATE_CONSENSUS_STATE_PREFIX,
 };
+use ibc::core::primitives::proto::{Any, Protobuf};
 
 use prost::Message;
 
-use crate::{ContractError, GenesisMetadata, parse_height, HeightTravel};
+use crate::types::ClientType;
+use crate::{parse_height, ContractError, GenesisMetadata, HeightTravel};
 
 type Checksum = Vec<u8>;
 
 /// Context is a wrapper around the deps and env that gives access to the
 /// methods of the ibc-rs Validation and Execution traits.
-pub struct Context<'a> {
+pub struct Context<'a, C: ClientType<'a>> {
     deps: Option<Deps<'a>>,
     deps_mut: Option<DepsMut<'a>>,
     env: Env,
     client_id: ClientId,
     checksum: Option<Checksum>,
+    client_type: std::marker::PhantomData<C>,
 }
 
-impl<'a> Context<'a> {
+impl<'a, C: ClientType<'a>> Context<'a, C> {
     pub fn new_ref(deps: Deps<'a>, env: Env) -> Result<Self, ContractError> {
         let client_id = ClientId::from_str(env.contract.address.as_str())?;
 
@@ -38,6 +40,7 @@ impl<'a> Context<'a> {
             env,
             client_id,
             checksum: None,
+            client_type: std::marker::PhantomData::<C>,
         })
     }
 
@@ -50,6 +53,7 @@ impl<'a> Context<'a> {
             env,
             client_id,
             checksum: None,
+            client_type: std::marker::PhantomData::<C>,
         })
     }
 
@@ -187,20 +191,23 @@ impl<'a> Context<'a> {
                 let client_state_value = self.retrieve(ClientStatePath::leaf())?;
 
                 let wasm_client_state: WasmClientState =
-                    Protobuf::<Any>::decode(client_state_value.as_slice()).map_err(
-                        |e| ClientError::Other {
+                    Protobuf::<Any>::decode(client_state_value.as_slice()).map_err(|e| {
+                        ClientError::Other {
                             description: e.to_string(),
                         }
-                    )?;
+                    })?;
 
                 Ok(wasm_client_state.checksum)
             }
         }
     }
 
-    pub fn encode_client_state(&self, client_state: TendermintClientState) -> Result<Vec<u8>, ClientError> {
+    pub fn encode_client_state(
+        &self,
+        client_state: C::ClientState,
+    ) -> Result<Vec<u8>, ClientError> {
         let wasm_client_state = WasmClientState {
-            data: Any::from(client_state.inner().clone()).encode_to_vec(),
+            data: C::ClientState::encode_thru_any(client_state.clone()),
             checksum: self.obtain_checksum()?,
             latest_height: client_state.latest_height(),
         };
@@ -213,7 +220,7 @@ pub trait StorageRef {
     fn storage_ref(&self) -> &dyn Storage;
 }
 
-impl StorageRef for Context<'_> {
+impl<'a, C: ClientType<'a>> StorageRef for Context<'a, C> {
     fn storage_ref(&self) -> &dyn Storage {
         match self.deps {
             Some(ref deps) => deps.storage,
@@ -229,7 +236,7 @@ pub trait StorageMut: StorageRef {
     fn storage_mut(&mut self) -> &mut dyn Storage;
 }
 
-impl StorageMut for Context<'_> {
+impl<'a, C: ClientType<'a>> StorageMut for Context<'a, C> {
     fn storage_mut(&mut self) -> &mut dyn Storage {
         match self.deps_mut {
             Some(ref mut deps) => deps.storage,

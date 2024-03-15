@@ -2,9 +2,9 @@
 
 use alloc::vec::Vec;
 
-use cosmwasm_schema::{cw_serde, QueryResponses};
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
+use cosmwasm_schema::{cw_serde, QueryResponses};
 //use ibc::clients::wasm_types::serializer::Base64;
 use serde::de::Error;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -51,8 +51,7 @@ pub struct InstantiateMsg {
 // ------------------------------------------------------------
 
 #[cw_serde]
-pub enum SudoMsg {
-}
+pub enum SudoMsg {}
 
 // ------------------------------------------------------------
 // Implementation of the QueryMsg enum and its variants
@@ -60,5 +59,4 @@ pub enum SudoMsg {
 
 #[cw_serde]
 #[derive(QueryResponses)]
-pub enum QueryMsg {
-}
+pub enum QueryMsg {}
