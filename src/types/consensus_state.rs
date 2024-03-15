@@ -1,21 +1,21 @@
 use ibc::clients::tendermint::consensus_state::ConsensusState as TendermintConsensusState;
-use ibc::clients::tendermint::types::TENDERMINT_CONSENSUS_STATE_TYPE_URL;
+use ibc::clients::tendermint::types::{ConsensusState, TENDERMINT_CONSENSUS_STATE_TYPE_URL};
 use ibc::core::client::types::error::ClientError;
-//use ibc::core::derive::ConsensusState as ConsensusStateDerive;
 use ibc::core::primitives::proto::Any;
+use ibc::derive::ConsensusState as ConsensusStateDerive;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, ConsensusStateDerive)]
 pub enum AnyConsensusState {
     Rollkit(TendermintConsensusState),
 }
 
-impl From<TendermintConsensusState> for AnyConsensusState {
-    fn from(value: TendermintConsensusState) -> Self {
+impl From<ConsensusState> for AnyConsensusState {
+    fn from(value: ConsensusState) -> Self {
         AnyConsensusState::Rollkit(value.into())
     }
 }
 
-impl TryFrom<AnyConsensusState> for TendermintConsensusState {
+impl TryFrom<AnyConsensusState> for ConsensusState {
     type Error = ClientError;
 
     fn try_from(value: AnyConsensusState) -> Result<Self, Self::Error> {

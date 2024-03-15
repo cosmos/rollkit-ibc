@@ -7,6 +7,7 @@ use ibc::core::host::types::path::{iteration_key, ClientConsensusStatePath, Clie
 use ibc::core::primitives::Timestamp;
 
 use super::Context;
+use crate::types::AnyCodec;
 use crate::types::ClientType;
 
 impl<'a, C: ClientType<'a>> ClientExecutionContext for Context<'a, C> {

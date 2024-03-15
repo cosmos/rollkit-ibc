@@ -12,10 +12,10 @@ use ibc::core::host::types::path::{
 };
 use ibc::core::primitives::proto::{Any, Protobuf};
 
-use prost::Message;
-
+use crate::types::AnyCodec;
 use crate::types::ClientType;
 use crate::{parse_height, ContractError, GenesisMetadata, HeightTravel};
+use prost::Message;
 
 type Checksum = Vec<u8>;
 
