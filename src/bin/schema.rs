@@ -1,11 +1,11 @@
 use cosmwasm_schema::write_api;
 
-use rollkit_ibc::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+use rollkit_ibc::msg::{InstantiateMsg, SudoMsg};
 
 fn main() {
     write_api! {
         instantiate: InstantiateMsg,
-        execute: ExecuteMsg,
-        query: QueryMsg,
+        sudo: SudoMsg,
+        // query: QueryMsg,
     }
 }

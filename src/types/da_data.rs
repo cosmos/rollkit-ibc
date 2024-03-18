@@ -29,7 +29,7 @@ impl Display for DaData {
             f,
             "DaData {{ client_id: {}, shared_proof: {} }}",
             &self.client_id,
-            &general_purpose::STANDARD.encode(self.shared_proof)
+            &general_purpose::STANDARD.encode(&self.shared_proof)
         )
     }
 }

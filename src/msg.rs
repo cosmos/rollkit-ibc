@@ -264,6 +264,7 @@ pub struct MigrateClientStoreMsg {}
 // ------------------------------------------------------------
 
 #[cw_serde]
+// #[derive(QueryResponses)] TODO: we might want to add this macro, but it didn't for now because it required some extra work and it's not strictly necessary.
 pub enum QueryMsg {
     Status(StatusMsg),
     ExportMetadata(ExportMetadataMsg),
