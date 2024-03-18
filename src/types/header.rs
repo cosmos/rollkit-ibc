@@ -63,7 +63,8 @@ impl TryFrom<RawRollkitHeader> for Header {
             .tendermint_header
             .ok_or(Error::missing("missing tendermint header"))?;
 
-        let tendermint_header = TendermintHeader::try_from(raw_tendermint_header).map_err(Error::source)?;
+        let tendermint_header =
+            TendermintHeader::try_from(raw_tendermint_header).map_err(Error::source)?;
 
         let da_data = value
             .da_data

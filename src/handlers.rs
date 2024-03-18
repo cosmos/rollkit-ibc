@@ -1,15 +1,20 @@
 use cosmwasm_std::{to_json_binary, Binary};
+use ibc::core::client::context::client_state::{
+    ClientStateCommon, ClientStateExecution, ClientStateValidation,
+};
+use ibc::core::client::context::prelude::*;
 use ibc::core::host::types::path::ClientConsensusStatePath;
-use ibc::core::host::ValidationContext;
-use ibc_proto::google::protobuf::Any;
+use ibc::primitives::proto::Any;
 use prost::Message;
 
 use crate::context::Context;
-use crate::types::{
-    CheckForMisbehaviourMsg, ClientMessage, ContractError, ContractResult, ExportMetadataMsg,
-    InstantiateMsg, QueryMsg, QueryResponse, StatusMsg, SudoMsg, UpdateStateMsg,
-    UpdateStateOnMisbehaviourMsg, VerifyClientMessageMsg, VerifyMembershipMsg,
-    VerifyNonMembershipMsg, VerifyUpgradeAndUpdateStateMsg,
+use crate::error::ContractError;
+use crate::types::{ClientMessage, ClientType};
+use crate::{
+    CheckForMisbehaviourMsg, ContractResult, ExportMetadataMsg, InstantiateMsg, QueryMsg,
+    QueryResponse, StatusMsg, SudoMsg, UpdateStateMsg, UpdateStateOnMisbehaviourMsg,
+    VerifyClientMessageMsg, VerifyMembershipMsg, VerifyNonMembershipMsg,
+    VerifyUpgradeAndUpdateStateMsg,
 };
 
 impl<'a, C: ClientType<'a>> Context<'a, C> {

@@ -39,14 +39,14 @@ impl<'a, C: ClientType<'a>> ClientValidationContext for Context<'a, C> {
     ) -> Result<Self::ConsensusStateRef, ContextError> {
         let consensus_state_value = self.retrieve(client_cons_state_path.leaf())?;
 
-        let any_wasm: WasmConsensusState =
+        let wasm_consensus_state: WasmConsensusState =
             Protobuf::<Any>::decode(consensus_state_value.as_slice()).map_err(|e| {
                 ClientError::Other {
                     description: e.to_string(),
                 }
             })?;
 
-        let tm_consensus_state = C::ConsensusState::decode_thru_any(any_wasm.data)?;
+        let tm_consensus_state = C::ConsensusState::decode_thru_any(wasm_consensus_state.data)?;
 
         Ok(tm_consensus_state)
     }
