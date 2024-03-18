@@ -1,4 +1,4 @@
-use ibc::clients::tendermint::consensus_state::ConsensusState as TendermintConsensusState;
+use ibc::clients::tendermint::context::{ConsensusStateConverter, ValidationContext};
 use ibc::clients::wasm_types::client_state::ClientState as WasmClientState;
 use ibc::clients::wasm_types::consensus_state::ConsensusState as WasmConsensusState;
 use ibc::core::client::context::ClientValidationContext;
@@ -9,10 +9,10 @@ use ibc::core::host::types::path::{ClientConsensusStatePath, ClientStatePath};
 use ibc::core::primitives::proto::{Any, Protobuf};
 use ibc::core::primitives::Timestamp;
 
-use super::{ctx::ValidationContext, ctx::ConsensusStateConverter, Context};
+use super::Context;
 use crate::helpers::HeightTravel;
-use crate::types::ClientType;
 use crate::types::AnyCodec;
+use crate::types::ClientType;
 
 impl<'a, C: ClientType<'a>> ClientValidationContext for Context<'a, C> {
     type ClientStateRef = C::ClientState;
@@ -21,9 +21,11 @@ impl<'a, C: ClientType<'a>> ClientValidationContext for Context<'a, C> {
     fn client_state(&self, _client_id: &ClientId) -> Result<Self::ClientStateRef, ContextError> {
         let client_state_value = self.retrieve(ClientStatePath::leaf())?;
 
-        let wasm_client_state: WasmClientState = Protobuf::<Any>::decode(client_state_value.as_slice())
-            .map_err(|e| ClientError::Other {
-                description: e.to_string(),
+        let wasm_client_state: WasmClientState =
+            Protobuf::<Any>::decode(client_state_value.as_slice()).map_err(|e| {
+                ClientError::Other {
+                    description: e.to_string(),
+                }
             })?;
 
         let tm_client_state = C::ClientState::decode_thru_any(wasm_client_state.data)?;
@@ -44,14 +46,9 @@ impl<'a, C: ClientType<'a>> ClientValidationContext for Context<'a, C> {
                 }
             })?;
 
-        let tm_consensus_state: TendermintConsensusState =
-            Protobuf::<Any>::decode(&mut any_wasm.data.as_slice()).map_err(|e| {
-                ClientError::Other {
-                    description: e.to_string(),
-                }
-            })?;
+        let tm_consensus_state = C::ConsensusState::decode_thru_any(any_wasm.data)?;
 
-        Ok(tm_consensus_state.into())
+        Ok(tm_consensus_state)
     }
 
     fn client_update_meta(

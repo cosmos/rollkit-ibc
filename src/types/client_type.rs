@@ -1,4 +1,4 @@
-use ibc::clients::tendermint::types::ClientState as TendermintClientState;
+use ibc::clients::tendermint::client_state::ClientState as TendermintClientState;
 use ibc::core::client::context::client_state::ClientStateExecution;
 use ibc::core::client::context::consensus_state::ConsensusState as ConsensusStateTrait;
 use ibc::core::client::types::error::ClientError;

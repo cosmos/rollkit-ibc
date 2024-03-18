@@ -6,10 +6,10 @@ use prost::Message;
 
 use crate::context::Context;
 use crate::types::{
-    CheckForMisbehaviourMsg, ContractError, ContractResult, ExportMetadataMsg, InstantiateMsg,
-    QueryMsg, QueryResponse, StatusMsg, SudoMsg, UpdateStateMsg, UpdateStateOnMisbehaviourMsg,
-    VerifyClientMessageMsg, VerifyMembershipMsg, VerifyNonMembershipMsg,
-    VerifyUpgradeAndUpdateStateMsg, ClientMessage,
+    CheckForMisbehaviourMsg, ClientMessage, ContractError, ContractResult, ExportMetadataMsg,
+    InstantiateMsg, QueryMsg, QueryResponse, StatusMsg, SudoMsg, UpdateStateMsg,
+    UpdateStateOnMisbehaviourMsg, VerifyClientMessageMsg, VerifyMembershipMsg,
+    VerifyNonMembershipMsg, VerifyUpgradeAndUpdateStateMsg,
 };
 
 impl<'a, C: ClientType<'a>> Context<'a, C> {
