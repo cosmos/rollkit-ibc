@@ -13,7 +13,7 @@ build-cw: ## Build the WASM file for the rollkit light client
 	@echo "Building the WASM file for the rollkit light client"
 	@RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release --lib --locked
 	@mkdir -p contracts
-	@cp target/wasm32-unknown-unknown/release/rollkit-ibc.wasm contracts/
+	@cp target/wasm32-unknown-unknown/release/rollkit_ibc.wasm contracts/
 
 optimize-contracts: ## Optimize WASM files in contracts directory
 	@echo "Optimizing WASM files..."
