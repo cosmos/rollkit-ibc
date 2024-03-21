@@ -9,8 +9,6 @@
 )]
 #![forbid(unsafe_code)]
 
-extern crate alloc;
-
 pub mod context;
 pub mod contract;
 mod error;
