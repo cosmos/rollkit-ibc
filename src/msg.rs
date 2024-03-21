@@ -1,7 +1,6 @@
 //! Contains the definition of the messages that can be sent to the CosmWasm contract.
 
-use alloc::vec::Vec;
-use std::str::FromStr;
+use core::str::FromStr;
 
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;

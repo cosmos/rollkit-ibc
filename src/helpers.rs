@@ -11,7 +11,7 @@ pub enum HeightTravel {
 /// Decodes a `Height` from a UTF-8 encoded byte array.
 pub fn parse_height(encoded_height: Vec<u8>) -> Result<Height, ClientError> {
     let height_str =
-        alloc::str::from_utf8(encoded_height.as_slice()).map_err(|e| ClientError::Other {
+        core::str::from_utf8(encoded_height.as_slice()).map_err(|e| ClientError::Other {
             description: e.to_string(),
         })?;
 

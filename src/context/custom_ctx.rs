@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use cosmwasm_std::{Deps, DepsMut, Env, Order, Storage};
 use ibc_clients::wasm_types::client_state::ClientState as WasmClientState;
@@ -27,7 +27,7 @@ pub struct Context<'a, C: ClientType<'a>> {
     env: Env,
     client_id: ClientId,
     checksum: Option<Checksum>,
-    client_type: std::marker::PhantomData<C>,
+    client_type: core::marker::PhantomData<C>,
 }
 
 impl<'a, C: ClientType<'a>> Context<'a, C> {
@@ -40,7 +40,7 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
             env,
             client_id,
             checksum: None,
-            client_type: std::marker::PhantomData::<C>,
+            client_type: core::marker::PhantomData::<C>,
         })
     }
 
@@ -53,7 +53,7 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
             env,
             client_id,
             checksum: None,
-            client_type: std::marker::PhantomData::<C>,
+            client_type: core::marker::PhantomData::<C>,
         })
     }
 

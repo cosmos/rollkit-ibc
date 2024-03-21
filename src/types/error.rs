@@ -1,5 +1,3 @@
-use alloc::string::{String, ToString};
-
 use ibc_core::client::types::error::ClientError;
 use ibc_core::handler::types::error::ContextError;
 use ibc_core::host::types::error::IdentifierError;

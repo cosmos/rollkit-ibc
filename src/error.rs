@@ -1,4 +1,3 @@
-use alloc::string::String;
 use std::error::Error as StdError;
 
 use cosmwasm_std::StdError as CwError;
