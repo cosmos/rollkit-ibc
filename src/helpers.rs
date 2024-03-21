@@ -1,5 +1,5 @@
-use ibc::core::client::types::error::ClientError;
-use ibc::core::client::types::Height;
+use ibc_core::client::types::error::ClientError;
+use ibc_core::client::types::Height;
 
 /// Travel is an enum to represent the direction of travel in the context of
 /// height.

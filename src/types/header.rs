@@ -2,10 +2,10 @@
 
 use core::fmt::{Debug, Display, Error as FmtError, Formatter};
 
-use ibc::clients::tendermint::types::Header as TendermintHeader;
-use ibc::core::client::types::Height;
-use ibc::core::primitives::proto::{Any, Protobuf};
-use ibc::core::primitives::Timestamp;
+use ibc_clients::tendermint::types::Header as TendermintHeader;
+use ibc_core::client::types::Height;
+use ibc_core::primitives::proto::{Any, Protobuf};
+use ibc_core::primitives::Timestamp;
 use ibc_proto::ibc::lightclients::rollkit::v1::Header as RawRollkitHeader;
 
 use crate::types::DaData;

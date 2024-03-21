@@ -9,15 +9,15 @@ use cosmwasm_schema::cw_serde;
 use serde::de::Error;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-//use ibc::clients::wasm_types::client_message::ClientMessage;
+//use ibc_clients::wasm_types::client_message::ClientMessage;
 
-use ibc::core::client::types::error::ClientError;
-use ibc::core::client::types::proto::v1::Height as RawHeight;
-use ibc::core::client::types::Height;
-use ibc::core::commitment_types::commitment::{CommitmentPrefix, CommitmentProofBytes};
-use ibc::core::handler::types::error::ContextError;
-use ibc::core::host::types::path::Path;
-use ibc::core::primitives::proto::Any;
+use ibc_core::client::types::error::ClientError;
+use ibc_core::client::types::proto::v1::Height as RawHeight;
+use ibc_core::client::types::Height;
+use ibc_core::commitment_types::commitment::{CommitmentPrefix, CommitmentProofBytes};
+use ibc_core::handler::types::error::ContextError;
+use ibc_core::host::types::path::Path;
+use ibc_core::primitives::proto::Any;
 use prost::Message;
 
 use crate::error::ContractError;

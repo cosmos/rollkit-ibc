@@ -1,6 +1,6 @@
-use ibc::clients::tendermint::types::Misbehaviour;
-use ibc::clients::tendermint::types::TENDERMINT_MISBEHAVIOUR_TYPE_URL;
-use ibc::core::primitives::proto::{Any, Protobuf};
+use ibc_clients::tendermint::types::Misbehaviour;
+use ibc_clients::tendermint::types::TENDERMINT_MISBEHAVIOUR_TYPE_URL;
+use ibc_core::primitives::proto::{Any, Protobuf};
 use prost::Message;
 
 use crate::types::{Error, Header, ROLLKIT_HEADER_TYPE_URL};

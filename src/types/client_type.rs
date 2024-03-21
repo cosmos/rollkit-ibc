@@ -1,8 +1,8 @@
-use ibc::clients::tendermint::client_state::ClientState as TendermintClientState;
-use ibc::core::client::context::client_state::ClientStateExecution;
-use ibc::core::client::context::consensus_state::ConsensusState as ConsensusStateTrait;
-use ibc::core::client::types::error::ClientError;
-use ibc::core::primitives::proto::Any;
+use ibc_clients::tendermint::client_state::ClientState as TendermintClientState;
+use ibc_core::client::context::client_state::ClientStateExecution;
+use ibc_core::client::context::consensus_state::ConsensusState as ConsensusStateTrait;
+use ibc_core::client::types::error::ClientError;
+use ibc_core::primitives::proto::Any;
 
 use crate::context::Context;
 use crate::types::AnyConsensusState;

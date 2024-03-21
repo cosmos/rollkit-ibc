@@ -3,8 +3,8 @@ use base64::Engine;
 use core::fmt::{Debug, Display, Error as FmtError, Formatter};
 use std::str::FromStr;
 
-use ibc::core::host::types::identifiers::ClientId;
-use ibc::core::primitives::proto::Protobuf;
+use ibc_core::host::types::identifiers::ClientId;
+use ibc_core::primitives::proto::Protobuf;
 use ibc_proto::ibc::lightclients::rollkit::v1::DaData as RawDaData;
 
 use crate::types::Error;
