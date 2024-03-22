@@ -1,7 +1,7 @@
 use cosmwasm_std::{to_json_binary, Binary};
 use ibc_core::client::context::prelude::*;
 use ibc_core::host::types::path::ClientConsensusStatePath;
-use ibc_primitives::proto::Any;
+use ibc_core::primitives::proto::Any;
 use prost::Message;
 
 use crate::context::Context;
