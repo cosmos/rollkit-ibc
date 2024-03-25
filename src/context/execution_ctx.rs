@@ -1,10 +1,10 @@
-use ibc::clients::wasm_types::consensus_state::ConsensusState as WasmConsensusState;
-use ibc::core::client::context::ClientExecutionContext;
-use ibc::core::client::types::Height;
-use ibc::core::handler::types::error::ContextError;
-use ibc::core::host::types::identifiers::ClientId;
-use ibc::core::host::types::path::{iteration_key, ClientConsensusStatePath, ClientStatePath};
-use ibc::core::primitives::Timestamp;
+use ibc_clients::wasm_types::consensus_state::ConsensusState as WasmConsensusState;
+use ibc_core::client::context::ClientExecutionContext;
+use ibc_core::client::types::Height;
+use ibc_core::handler::types::error::ContextError;
+use ibc_core::host::types::identifiers::ClientId;
+use ibc_core::host::types::path::{iteration_key, ClientConsensusStatePath, ClientStatePath};
+use ibc_core::primitives::Timestamp;
 
 use super::Context;
 use crate::types::AnyCodec;

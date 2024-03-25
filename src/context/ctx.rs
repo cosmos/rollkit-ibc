@@ -1,12 +1,12 @@
-use ibc::clients::tendermint::consensus_state::ConsensusState as TendermintConsensusState;
-use ibc::core::client::context::ClientExecutionContext;
-use ibc::core::client::types::error::ClientError;
+use ibc_clients::tendermint::consensus_state::ConsensusState as TendermintConsensusState;
+use ibc_core::client::context::ClientExecutionContext;
+use ibc_core::client::types::error::ClientError;
 
-use ibc::core::client::context::ClientValidationContext;
-use ibc::core::client::types::Height;
-use ibc::core::handler::types::error::ContextError;
-use ibc::core::host::types::identifiers::ClientId;
-use ibc::core::primitives::Timestamp;
+use ibc_core::client::context::ClientValidationContext;
+use ibc_core::client::types::Height;
+use ibc_core::handler::types::error::ContextError;
+use ibc_core::host::types::identifiers::ClientId;
+use ibc_core::primitives::Timestamp;
 
 /// Enables conversion (`TryInto` and `From`) between the consensus state type
 /// used by the host and the one specific to the Rollkit light client, which

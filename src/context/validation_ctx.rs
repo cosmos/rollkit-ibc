@@ -1,13 +1,13 @@
-use ibc::clients::tendermint::context::{ConsensusStateConverter, ValidationContext};
-use ibc::clients::wasm_types::client_state::ClientState as WasmClientState;
-use ibc::clients::wasm_types::consensus_state::ConsensusState as WasmConsensusState;
-use ibc::core::client::context::ClientValidationContext;
-use ibc::core::client::types::{error::ClientError, Height};
-use ibc::core::handler::types::error::ContextError;
-use ibc::core::host::types::identifiers::ClientId;
-use ibc::core::host::types::path::{ClientConsensusStatePath, ClientStatePath};
-use ibc::core::primitives::proto::{Any, Protobuf};
-use ibc::core::primitives::Timestamp;
+use ibc_clients::tendermint::context::{ConsensusStateConverter, ValidationContext};
+use ibc_clients::wasm_types::client_state::ClientState as WasmClientState;
+use ibc_clients::wasm_types::consensus_state::ConsensusState as WasmConsensusState;
+use ibc_core::client::context::ClientValidationContext;
+use ibc_core::client::types::{error::ClientError, Height};
+use ibc_core::handler::types::error::ContextError;
+use ibc_core::host::types::identifiers::ClientId;
+use ibc_core::host::types::path::{ClientConsensusStatePath, ClientStatePath};
+use ibc_core::primitives::proto::{Any, Protobuf};
+use ibc_core::primitives::Timestamp;
 
 use super::Context;
 use crate::helpers::HeightTravel;

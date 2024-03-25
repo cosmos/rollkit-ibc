@@ -1,16 +1,16 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use cosmwasm_std::{Deps, DepsMut, Env, Order, Storage};
-use ibc::clients::wasm_types::client_state::ClientState as WasmClientState;
-use ibc::core::client::context::client_state::ClientStateCommon;
-use ibc::core::client::types::error::ClientError;
-use ibc::core::client::types::Height;
-use ibc::core::host::types::identifiers::ClientId;
-use ibc::core::host::types::path::{
+use ibc_clients::wasm_types::client_state::ClientState as WasmClientState;
+use ibc_core::client::context::client_state::ClientStateCommon;
+use ibc_core::client::types::error::ClientError;
+use ibc_core::client::types::Height;
+use ibc_core::host::types::identifiers::ClientId;
+use ibc_core::host::types::path::{
     iteration_key, ClientStatePath, ClientUpdateHeightPath, ClientUpdateTimePath,
     ITERATE_CONSENSUS_STATE_PREFIX,
 };
-use ibc::core::primitives::proto::{Any, Protobuf};
+use ibc_core::primitives::proto::{Any, Protobuf};
 
 use crate::types::AnyCodec;
 use crate::types::ClientType;
@@ -27,7 +27,7 @@ pub struct Context<'a, C: ClientType<'a>> {
     env: Env,
     client_id: ClientId,
     checksum: Option<Checksum>,
-    client_type: std::marker::PhantomData<C>,
+    client_type: core::marker::PhantomData<C>,
 }
 
 impl<'a, C: ClientType<'a>> Context<'a, C> {
@@ -40,7 +40,7 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
             env,
             client_id,
             checksum: None,
-            client_type: std::marker::PhantomData::<C>,
+            client_type: core::marker::PhantomData::<C>,
         })
     }
 
@@ -53,7 +53,7 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
             env,
             client_id,
             checksum: None,
-            client_type: std::marker::PhantomData::<C>,
+            client_type: core::marker::PhantomData::<C>,
         })
     }
 

@@ -1,8 +1,6 @@
-use alloc::string::{String, ToString};
-
-use ibc::core::client::types::error::ClientError;
-use ibc::core::handler::types::error::ContextError;
-use ibc::core::host::types::error::IdentifierError;
+use ibc_core::client::types::error::ClientError;
+use ibc_core::handler::types::error::ContextError;
+use ibc_core::host::types::error::IdentifierError;
 use tendermint_light_client_verifier::Verdict;
 
 /// Defines the error type for Rollkit light client.

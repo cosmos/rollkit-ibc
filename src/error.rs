@@ -1,13 +1,12 @@
-use alloc::string::String;
 use std::error::Error as StdError;
 
 use cosmwasm_std::StdError as CwError;
 use derive_more::{Display, From};
-use ibc::core::client::types::error::ClientError;
-use ibc::core::commitment_types::error::CommitmentError;
-use ibc::core::handler::types::error::ContextError;
-use ibc::core::host::types::error::IdentifierError;
-use ibc::core::host::types::path::PathError;
+use ibc_core::client::types::error::ClientError;
+use ibc_core::commitment_types::error::CommitmentError;
+use ibc_core::handler::types::error::ContextError;
+use ibc_core::host::types::error::IdentifierError;
+use ibc_core::host::types::path::PathError;
 
 use crate::types::Error;
 

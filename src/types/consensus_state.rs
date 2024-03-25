@@ -1,8 +1,8 @@
-use ibc::clients::tendermint::consensus_state::ConsensusState as TendermintConsensusState;
-use ibc::clients::tendermint::types::{ConsensusState, TENDERMINT_CONSENSUS_STATE_TYPE_URL};
-use ibc::core::client::types::error::ClientError;
-use ibc::core::primitives::proto::Any;
-use ibc::derive::ConsensusState as ConsensusStateDerive;
+use ibc_clients::tendermint::consensus_state::ConsensusState as TendermintConsensusState;
+use ibc_clients::tendermint::types::{ConsensusState, TENDERMINT_CONSENSUS_STATE_TYPE_URL};
+use ibc_core::client::types::error::ClientError;
+use ibc_core::derive::ConsensusState as ConsensusStateDerive;
+use ibc_core::primitives::proto::Any;
 
 #[derive(Clone, Debug, ConsensusStateDerive)]
 pub enum AnyConsensusState {
