@@ -8,8 +8,6 @@ use cosmwasm_schema::cw_serde;
 use serde::de::Error;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-//use ibc_clients::wasm_types::client_message::ClientMessage;
-
 use ibc_core::client::types::error::ClientError;
 use ibc_core::client::types::proto::v1::Height as RawHeight;
 use ibc_core::client::types::Height;
