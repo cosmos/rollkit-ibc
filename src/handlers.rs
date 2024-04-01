@@ -16,9 +16,9 @@ use crate::{
 
 impl<'a, C: ClientType<'a>> Context<'a, C> {
     pub fn instantiate(&mut self, msg: InstantiateMsg) -> Result<Binary, ContractError> {
-        let any = Any::decode(&mut msg.client_state.as_slice())?;
+        let any_client_state = Any::decode(&mut msg.client_state.as_slice())?;
 
-        let client_state = C::ClientState::try_from(any)?;
+        let client_state = C::ClientState::try_from(any_client_state)?;
 
         let any_consensus_state = Any::decode(&mut msg.consensus_state.as_slice())?;
 

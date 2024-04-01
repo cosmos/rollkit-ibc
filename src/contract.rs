@@ -1,6 +1,6 @@
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult};
 
 // use cw2::set_contract_version;
 
@@ -33,17 +33,24 @@ pub fn instantiate(
 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn execute(
-    _deps: DepsMut<'_>,
-    _env: Env,
+    deps: DepsMut<'_>,
+    env: Env,
     _info: MessageInfo,
-    _msg: SudoMsg,
+    msg: SudoMsg,
 ) -> Result<Response, ContractError> {
-    unimplemented!()
+    let mut ctx = RollkitContext::new_mut(deps, env)?;
+
+    let data = ctx.sudo(msg)?;
+
+    Ok(Response::default().set_data(data))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn query(_deps: Deps<'_>, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
-    unimplemented!()
+pub fn query(deps: Deps<'_>, env: Env, msg: QueryMsg) -> StdResult<Binary> {
+    let ctx = RollkitContext::new_ref(deps, env)?;
+
+    ctx.query(msg)
+        .map_err(|e| StdError::generic_err(e.to_string()))
 }
 
 #[cfg(test)]
