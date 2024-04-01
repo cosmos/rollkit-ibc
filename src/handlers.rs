@@ -64,7 +64,8 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
             }
             SudoMsg::VerifyMembership(msg) => {
                 // TODO: check DA light client is active
-                
+                // TODO: assert(processedTime + clientState.fraudPeriod > currentTimestamp())
+
                 let msg = VerifyMembershipMsg::try_from(msg)?;
 
                 let client_cons_state_path = ClientConsensusStatePath::new(
@@ -87,7 +88,8 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
             }
             SudoMsg::VerifyNonMembership(msg) => {
                 // TODO: check DA light client is active
-                
+                // TODO: assert(processedTime + clientState.fraudPeriod > currentTimestamp())
+
                 let msg = VerifyNonMembershipMsg::try_from(msg)?;
 
                 let client_cons_state_path = ClientConsensusStatePath::new(
