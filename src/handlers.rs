@@ -58,9 +58,13 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
 
                 client_state.update_state_on_misbehaviour(self, &client_id, any_client_msg)?;
 
+                // TODO: delete consensus state at misbehaviour height
+
                 ContractResult::success()
             }
             SudoMsg::VerifyMembership(msg) => {
+                // TODO: check DA light client is active
+                
                 let msg = VerifyMembershipMsg::try_from(msg)?;
 
                 let client_cons_state_path = ClientConsensusStatePath::new(
@@ -82,6 +86,8 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
                 ContractResult::success()
             }
             SudoMsg::VerifyNonMembership(msg) => {
+                // TODO: check DA light client is active
+                
                 let msg = VerifyNonMembershipMsg::try_from(msg)?;
 
                 let client_cons_state_path = ClientConsensusStatePath::new(
@@ -172,6 +178,8 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
 
                 client_state.verify_client_message(self, &client_id, any_client_msg)?;
 
+                // TODO: in case client message is a header, verify header proof and block data proof on the DA light client
+
                 QueryResponse::success()
             }
             QueryMsg::CheckForMisbehaviour(msg) => {
@@ -184,6 +192,8 @@ impl<'a, C: ClientType<'a>> Context<'a, C> {
 
                 let result =
                     client_state.check_for_misbehaviour(self, &client_id, any_client_msg)?;
+
+                // TODO: handle fraud proofs
 
                 QueryResponse::success().misbehaviour(result)
             }
