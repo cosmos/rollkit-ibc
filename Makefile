@@ -5,7 +5,7 @@ help: ## Display this help message
 
 clean: ## Cleans compiled
 	@cargo clean
-	
+
 install-dev-tools:  ## Installs all necessary cargo helpers
 	cargo install wasm-opt
 
@@ -14,7 +14,7 @@ build: ## Build the the entire project
 
 build-cw: ## Build the WASM file for the rollkit light client
 	@echo "Building the WASM file for the rollkit light client"
-	@RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release --lib --locked
+	@RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release --lib
 	@mkdir -p contracts
 	@cp target/wasm32-unknown-unknown/release/rollkit_ibc.wasm contracts/
 
