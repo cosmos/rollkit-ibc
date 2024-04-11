@@ -3,6 +3,9 @@
 help: ## Display this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+clean: ## Cleans compiled
+	@cargo clean
+	
 install-dev-tools:  ## Installs all necessary cargo helpers
 	cargo install wasm-opt
 
@@ -22,9 +25,6 @@ optimize-contracts: ## Optimize WASM files in contracts directory
 		wasm-opt "$$wasm_file" -o "$$optimized_file" -Os; \
 	done
 
-clean: ## Cleans compiled
-	@cargo clean
-
 lint:  ## cargo check and clippy. Skip clippy on guest code since it's not supported by risc0
 	## fmt first, because it's the cheapest
 	cargo +nightly fmt --all --check
@@ -42,11 +42,8 @@ find-unused-deps: ## Prints unused dependencies for project. Note: requires nigh
 check-features: ## Checks that project compiles with all combinations of features. default is not needed because we never check `cfg(default)`, we only use it as an alias.
 	cargo hack check --workspace --feature-powerset --exclude-features default
 
-test-legacy: ## Runs test suite with output from tests printed
-	@cargo test -- --nocapture -Zunstable-options --report-time
-
-test:  ## Runs test suite using next test
-	@cargo nextest run --workspace --all-features
+test: ## Run tests with all features and without default features.
+	@cargo test --all-targets --no-default-features
 
 docs:  ## Generates documentation locally
 	cargo doc --all-features --no-deps --release --open
