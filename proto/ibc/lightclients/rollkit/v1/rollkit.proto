@@ -5,6 +5,27 @@ package ibc.lightclients.rollkit.v1;
 import "gogoproto/gogo.proto";
 import "ibc/lightclients/tendermint/v1/tendermint.proto";
 
+// ClientState defines a Rollkit rollup client that tracks the
+// consensus state of the counterparty rollup.
+message ClientState {
+  ibc.lightclients.tendermint.v1.ClientState tendermint_client_state = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"tendermint_client_state\""
+  ];
+  DaParams da_params = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"da_params\""
+  ];
+}
+
+// DaParams defines the data-availability related parameters of a Rollkit rollup light.
+message DaParams {
+  // client ID of the DA light client
+  string client_id = 1;
+  // fraud dispute period window in nanoseconds
+  uint64 fraud_period_window = 2;
+}
+
 // Header defines the structure of the header for Rollkit light clients
 // operating on a Data Availability layer. It encapsulates all the information
 // necessary to update a client from a trusted Rollkit rollup ConsensusState.
@@ -30,8 +51,6 @@ message Header {
 // DaData defines the information needed by Rollkit rollup light
 // client to query the VerifyMembership RPC of the DA light client.
 message DaData {
-  // client ID of the DA light client
-  string client_id = 1;
   // the proof of inclusion of Rollkit rollup block data in DA block
   bytes shared_proof = 2;
 }
