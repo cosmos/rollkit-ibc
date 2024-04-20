@@ -7,6 +7,8 @@ use ibc_core::client::types::Height;
 use ibc_core::primitives::proto::{Any, Protobuf};
 use ibc_core::primitives::Timestamp;
 use ibc_proto::ibc::lightclients::rollkit::v1::Header as RawRollkitHeader;
+use tendermint::crypto::Sha256;
+use tendermint::merkle::MerkleHash;
 
 use crate::types::DaData;
 use crate::types::Error;
@@ -46,9 +48,9 @@ impl Header {
     }
 
     /// Checks if the fields of a given header are consistent with the trusted fields of this header.
-    pub fn validate_basic(&self) -> Result<(), Error> {
+    pub fn validate_basic<H: MerkleHash + Sha256 + Default>(&self) -> Result<(), Error> {
         self.tendermint_header
-            .validate_basic()
+            .validate_basic::<H>()
             .map_err(Error::source)
     }
 }

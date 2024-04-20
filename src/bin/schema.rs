@@ -1,6 +1,6 @@
 use cosmwasm_schema::write_api;
 
-use rollkit_ibc::msg::{InstantiateMsg, SudoMsg};
+use ibc_client_cw::types::{InstantiateMsg, SudoMsg};
 
 fn main() {
     write_api! {
