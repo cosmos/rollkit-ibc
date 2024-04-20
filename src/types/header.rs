@@ -2,7 +2,7 @@
 
 use core::fmt::{Debug, Display, Error as FmtError, Formatter};
 
-use ibc_clients::tendermint::types::Header as TendermintHeader;
+use ibc_client_tendermint::types::Header as TendermintHeader;
 use ibc_core::client::types::Height;
 use ibc_core::primitives::proto::{Any, Protobuf};
 use ibc_core::primitives::Timestamp;

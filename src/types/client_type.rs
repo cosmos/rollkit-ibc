@@ -1,6 +1,6 @@
 use crate::types::AnyConsensusState;
 use ibc_client_cw::api::ClientType;
-use ibc_clients::tendermint::client_state::ClientState as TendermintClientState;
+use ibc_client_tendermint::client_state::ClientState as TendermintClientState;
 
 pub struct RollkitClient;
 

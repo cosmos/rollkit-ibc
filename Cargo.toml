@@ -39,19 +39,13 @@ optimize = """docker run --rm -v "$(pwd)":/code \
 base64 = "0.22.0"
 cosmwasm-schema = "1.5.2"
 cosmwasm-std 	  = "1.5.2"
-cw-storage-plus = "2.0.0"
-cw2 = "2.0.0"
-derive_more = "0.99.17"
 ibc-core = { git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
-ibc-clients = {  git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
+ibc-client-tendermint = {  git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
 ibc-client-cw = {git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false }
 ibc-proto = { version = "0.42.2", default-features = false }
 prost = "0.12.3"
-schemars = "0.8.15"
-serde = { version = "1.0", features = ["derive", "rc"] }
 tendermint = "0.34.1"
 tendermint-light-client-verifier = "0.34.1"
-thiserror = { version = "1.0.49" }
 
 [patch.crates-io]
 ibc-proto = { git = "https://github.com/cosmos/ibc-proto-rs.git", rev = "6cbe4c7ace5a688bc98831fa9c1cc2dabf3b2976", default-features = false } # "0.42.2"
