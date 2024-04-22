@@ -12,18 +12,12 @@ install-dev-tools:  ## Installs all necessary cargo helpers
 build: ## Build the the entire project
 	@cargo build
 
-build-cw: ## Build the WASM file for the rollkit light client
+build-cw: ## Build the contract using cosmwasm/optimizer image
 	@echo "Building the WASM file for the rollkit light client"
-	@RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release --lib
-	@mkdir -p contracts
-	@cp target/wasm32-unknown-unknown/release/rollkit_ibc.wasm contracts/
-
-optimize-contracts: ## Optimize WASM files in contracts directory
-	@echo "Optimizing WASM files..."
-	@for wasm_file in contracts/*.wasm; do \
-		optimized_file="contracts/$$(basename $$wasm_file .wasm).opt.wasm"; \
-		wasm-opt "$$wasm_file" -o "$$optimized_file" -Os; \
-	done
+	docker run --rm -t -v "$(shell pwd)":/code \
+	--mount type=volume,source="$(shell basename "$(shell pwd)")_cache",target=/code/target \
+	--mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+	cosmwasm/optimizer:0.15.1
 
 lint:  ## cargo check and clippy. Skip clippy on guest code since it's not supported by risc0
 	## fmt first, because it's the cheapest
