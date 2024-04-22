@@ -47,3 +47,6 @@ test: ## Run tests with all features and without default features.
 
 docs:  ## Generates documentation locally
 	cargo doc --all-features --no-deps --release --open
+
+schema: ## Generate schema
+	@cargo run --bin schema
