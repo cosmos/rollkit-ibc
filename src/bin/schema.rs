@@ -1,6 +1,6 @@
 use cosmwasm_schema::write_api;
 
-use ibc_client_cw::types::{InstantiateMsg, SudoMsg};
+use ibc_client_cw::types::{InstantiateMsg, SudoMsg, QueryMsg};
 
 fn main() {
     write_api! {
