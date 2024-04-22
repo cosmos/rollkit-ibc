@@ -1,131 +1,94 @@
-name: Rust
-on:
-  pull_request:
-    paths:
-      - .github/workflows/rust.yml
-      - Cargo.toml
-      - Cargo.lock
-      - clients/**
-      - modules/**
-      - mocks/**
-  push:
-    branches: main
-    paths:
-      - .github/workflows/rust.yml
-      - Cargo.toml
-      - Cargo.lock
-      - clients/**
-      - modules/**
-      - mocks/**
+# Based on https://github.com/actions-rs/example/blob/master/.github/workflows/quickstart.yml
+name: rust
 
-env:
-  CARGO_INCREMENTAL: 0
-  CARGO_PROFILE_DEV_DEBUG: 1
-  CARGO_PROFILE_RELEASE_DEBUG: 1
-  RUST_BACKTRACE: short
-  CARGO_NET_RETRY: 10
-  RUSTUP_MAX_RETRIES: 10
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.go'
 
 jobs:
-  cleanup-runs:
+  unit-test:
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-    - uses: rokroskar/workflow-run-cleanup-action@master
-      env:
-        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    if: ${{ !startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/main' }}
+      - name: Checkout sources
+        uses: actions/checkout@v4
 
-  fmt:
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.77.2
+          target: wasm32-unknown-unknown
+          override: true
+
+      - name: Run unit tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: unit-test
+          args: --locked
+        env:
+          RUST_BACKTRACE: 1
+
+  build-wasm:
+    name: Build Wasm
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly # Since fmt uses unstable features for organizing imports
-          components: rustfmt
+          profile: minimal
+          toolchain: 1.77.2
+          target: wasm32-unknown-unknown
           override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
+
+      - name: Compile WASM contract
+        uses: actions-rs/cargo@v1
+        with:
+          command: wasm
+          args: --locked
+        env:
+          RUSTFLAGS: "-C link-arg=-s"
+
+  lints:
+    name: Lint Contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: 1.77.2
+          override: true
+          components: rustfmt, clippy
+
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
         with:
           command: fmt
           args: --all -- --check
 
-  doc_all_features:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Git credentials
-        run:
-          git config --global --replace-all "url.https://${{ secrets.AUTH_TOKEN }}@github.com.insteadOf" ssh://git@github.com
-      - uses: arduino/setup-protoc@v2
-      - uses: actions-rs/toolchain@v1
+      - name: Run cargo clippy
+        uses: actions-rs/cargo@v1
         with:
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: doc
-          args: --all-features --no-deps --release
+          command: clippy
+          args: -- -D warnings
 
-  clippy_all_features:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Git credentials
-        run:
-          git config --global --replace-all "url.https://${{ secrets.AUTH_TOKEN }}@github.com.insteadOf" ssh://git@github.com
-      - uses: arduino/setup-protoc@v2
-      - uses: actions-rs/toolchain@v1
+      - name: Generate Schema
+        uses: actions-rs/cargo@v1
         with:
-          toolchain: stable
-          components: clippy
-          override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features --all-targets
+          command: schema
+          args: --locked
 
-  clippy_no_default_features:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Git credentials
-        run:
-          git config --global --replace-all "url.https://${{ secrets.AUTH_TOKEN }}@github.com.insteadOf" ssh://git@github.com
-      - uses: arduino/setup-protoc@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy
-          override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --no-default-features
-
-  test-stable:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Git credentials
-        run:
-          git config --global --replace-all "url.https://${{ secrets.AUTH_TOKEN }}@github.com.insteadOf" ssh://git@github.com
-      - uses: arduino/setup-protoc@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --no-fail-fast --no-run
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --no-fail-fast --workspace -- --nocapture
-
+      - name: Schema Changes
+        # fails if any changes not committed
+        run: git diff --exit-code schema
