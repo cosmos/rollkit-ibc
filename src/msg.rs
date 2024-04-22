@@ -4,7 +4,7 @@ use core::str::FromStr;
 
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
-use cosmwasm_schema::cw_serde;
+use cosmwasm_schema::{cw_serde, QueryResponses};
 use serde::de::Error;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
@@ -261,12 +261,17 @@ pub struct MigrateClientStoreMsg {}
 // ------------------------------------------------------------
 
 #[cw_serde]
-// #[derive(QueryResponses)] TODO: we might want to add this macro, but it didn't for now because it required some extra work and it's not strictly necessary.
+#[derive(QueryResponses)]
 pub enum QueryMsg {
+    #[returns(crate::response::QueryResponse)]
     Status(StatusMsg),
+    #[returns(crate::response::QueryResponse)]
     ExportMetadata(ExportMetadataMsg),
+    #[returns(crate::response::QueryResponse)]
     TimestampAtHeight(TimestampAtHeightMsg),
+    #[returns(crate::response::QueryResponse)]
     VerifyClientMessage(VerifyClientMessageRaw),
+    #[returns(crate::response::QueryResponse)]
     CheckForMisbehaviour(CheckForMisbehaviourMsgRaw),
 }
 
