@@ -6,6 +6,6 @@ fn main() {
     write_api! {
         instantiate: InstantiateMsg,
         sudo: SudoMsg,
-        // query: QueryMsg,
+        query: QueryMsg,
     }
 }
