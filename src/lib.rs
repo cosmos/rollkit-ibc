@@ -11,3 +11,6 @@
 
 pub mod contract;
 pub mod types;
+pub mod client_state;
+pub mod consensus_state;
+pub mod client_message;
