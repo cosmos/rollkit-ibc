@@ -1,5 +1,5 @@
-use ibc_clients::tendermint::types::Misbehaviour;
-use ibc_clients::tendermint::types::TENDERMINT_MISBEHAVIOUR_TYPE_URL;
+use ibc_client_tendermint::types::Misbehaviour;
+use ibc_client_tendermint::types::TENDERMINT_MISBEHAVIOUR_TYPE_URL;
 use ibc_core::primitives::proto::{Any, Protobuf};
 use prost::Message;
 
