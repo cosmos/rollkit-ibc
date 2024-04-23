@@ -2,12 +2,10 @@
 use cosmwasm_std::entry_point;
 use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response, StdError, StdResult};
 
-// use cw2::set_contract_version;
-
-use crate::context::Context;
-use crate::error::ContractError;
-use crate::msg::{InstantiateMsg, QueryMsg, SudoMsg};
 use crate::types::RollkitClient;
+use ibc_client_cw::context::Context;
+use ibc_client_cw::types::ContractError;
+use ibc_client_cw::types::{InstantiateMsg, QueryMsg, SudoMsg};
 
 pub type RollkitContext<'a> = Context<'a, RollkitClient>;
 
