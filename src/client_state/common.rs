@@ -29,7 +29,7 @@ impl ClientStateCommon for ClientState {
   }
 
   fn latest_height(&self) -> Height {
-      self.tendermint_client_state.latest_height()
+      self.tendermint_client_state.latest_height
   }
 
   fn validate_proof_height(&self, proof_height: Height) -> Result<(), ClientError> {

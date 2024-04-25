@@ -1,10 +1,11 @@
 use ibc_client_tendermint::consensus_state::ConsensusState as TendermintConsensusState;
 use ibc_core::client::context::client_state::ClientStateExecution;
-use ibc_core::client::context::{Convertible, ExtClientExecutionContext};
+use ibc_core::client::context::{Convertible, ExtClientValidationContext, ExtClientExecutionContext};
 use ibc_core::client::types::error::ClientError;
 use ibc_core::client::types::Height;
 use ibc_core::primitives::proto::Any;
 use ibc_core::host::types::identifiers::ClientId;
+use ibc_core_host::types::path::{ClientConsensusStatePath, ClientStatePath};
 
 use crate::client_state::ClientState;
 
@@ -20,22 +21,22 @@ where
         client_id: &ClientId,
         consensus_state: Any,
     ) -> Result<(), ClientError> {
-        unimplemented!()
+        initialise(self, ctx, client_id, consensus_state)
     }
 
     fn update_state(
         &self,
-        ctx: &mut E,
-        client_id: &ClientId,
-        header: Any,
+        _ctx: &mut E,
+        _client_id: &ClientId,
+        _header: Any,
     ) -> Result<Vec<Height>, ClientError> {
         unimplemented!()
     }
 
     fn update_state_on_misbehaviour(
         &self,
-        ctx: &mut E,
-        client_id: &ClientId,
+        _ctx: &mut E,
+        _client_id: &ClientId,
         _client_message: Any,
     ) -> Result<(), ClientError> {
         unimplemented!()
@@ -44,20 +45,64 @@ where
     // Commit the new client state and consensus state to the store
     fn update_state_on_upgrade(
         &self,
-        ctx: &mut E,
-        client_id: &ClientId,
-        upgraded_client_state: Any,
-        upgraded_consensus_state: Any,
+        _ctx: &mut E,
+        _client_id: &ClientId,
+        _upgraded_client_state: Any,
+        _upgraded_consensus_state: Any,
     ) -> Result<Height, ClientError> {
         unimplemented!()
     }
 
     fn update_on_recovery(
         &self,
-        ctx: &mut E,
-        subject_client_id: &ClientId,
-        substitute_client_state: Any,
+        _ctx: &mut E,
+        _subject_client_id: &ClientId,
+        _substitute_client_state: Any,
     ) -> Result<(), ClientError> {
         unimplemented!()
     }
+}
+
+/// Seed the host store with initial client and consensus states.
+///
+/// Note that this function is typically implemented as part of the
+/// [`ClientStateExecution`] trait, but has been made a standalone function
+/// in order to make the ClientState APIs more flexible.
+pub fn initialise<E>(
+    client_state: &ClientState,
+    ctx: &mut E,
+    client_id: &ClientId,
+    consensus_state: Any,
+) -> Result<(), ClientError>
+where
+    E: ExtClientExecutionContext,
+    E::ClientStateRef: From<ClientState>,
+    E::ConsensusStateRef: Convertible<TendermintConsensusState, ClientError>,
+{
+    let host_timestamp = ExtClientValidationContext::host_timestamp(ctx)?;
+    let host_height = ExtClientValidationContext::host_height(ctx)?;
+
+    let tm_consensus_state = TendermintConsensusState::try_from(consensus_state)?;
+
+    ctx.store_client_state(
+        ClientStatePath::new(client_id.clone()),
+        client_state.clone().into(),
+    )?;
+    ctx.store_consensus_state(
+        ClientConsensusStatePath::new(
+            client_id.clone(),
+            client_state.tendermint_client_state.latest_height.revision_number(),
+            client_state.tendermint_client_state.latest_height.revision_height(),
+        ),
+        tm_consensus_state.into(),
+    )?;
+
+    ctx.store_update_meta(
+        client_id.clone(),
+        client_state.tendermint_client_state.latest_height,
+        host_timestamp,
+        host_height,
+    )?;
+
+    Ok(())
 }

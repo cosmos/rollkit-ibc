@@ -1301,6 +1301,7 @@ dependencies = [
  "ibc-client-cw",
  "ibc-client-tendermint",
  "ibc-core",
+ "ibc-core-host",
  "ibc-proto",
  "prost",
  "tendermint",

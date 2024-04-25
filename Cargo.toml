@@ -40,8 +40,9 @@ base64 = "0.22.0"
 cosmwasm-schema = "1.5.2"
 cosmwasm-std 	  = "1.5.2"
 ibc-core = { git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
-ibc-client-tendermint = {  git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
-ibc-client-cw = {git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false }
+ibc-core-host = { git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
+ibc-client-tendermint = { git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
+ibc-client-cw = { git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false }
 ibc-proto = { version = "0.42.2", default-features = false }
 prost = "0.12.3"
 tendermint = "0.34.1"

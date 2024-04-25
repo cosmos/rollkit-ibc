@@ -15,27 +15,27 @@ where
 {
     fn verify_client_message(
         &self,
-        ctx: &V,
-        client_id: &ClientId,
-        client_message: Any,
+        _ctx: &V,
+        _client_id: &ClientId,
+        _client_message: Any,
     ) -> Result<(), ClientError> {
         unimplemented!("verify_client_message")
     }
 
     fn check_for_misbehaviour(
         &self,
-        ctx: &V,
-        client_id: &ClientId,
-        client_message: Any,
+        _ctx: &V,
+        _client_id: &ClientId,
+        _client_message: Any,
     ) -> Result<bool, ClientError> {
         unimplemented!("verify_client_message")
     }
 
-    fn status(&self, ctx: &V, client_id: &ClientId) -> Result<Status, ClientError> {
+    fn status(&self, _ctx: &V, _client_id: &ClientId) -> Result<Status, ClientError> {
         unimplemented!("verify_client_message")
     }
 
-    fn check_substitute(&self, _ctx: &V, substitute_client_state: Any) -> Result<(), ClientError> {
+    fn check_substitute(&self, _ctx: &V, _substitute_client_state: Any) -> Result<(), ClientError> {
         unimplemented!("verify_client_message")
     }
 }

@@ -1,4 +1,4 @@
-use ibc_client_tendermint::client_state::ClientState as TendermintClientState;
+use ibc_client_tendermint::types::ClientState as TendermintClientState;
 use ibc_proto::ibc::lightclients::rollkit::v1::ClientState as RawClientState;
 use ibc_core::client::types::error::ClientError;
 
