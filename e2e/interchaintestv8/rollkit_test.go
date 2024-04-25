@@ -1,15 +1,24 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
+	"io"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/suite"
 
-	govv1 "cosmossdk.io/api/cosmos/gov/v1"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+
+	ibcwasmtypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 
 	"github.com/strangelove-ventures/interchaintest/v8/chain/cosmos"
+	"github.com/strangelove-ventures/interchaintest/v8/ibc"
 	"github.com/strangelove-ventures/interchaintest/v8/testutil"
 
 	"github.com/cosmos/rollkit-ibc/e2e/interchaintest/v8/e2esuite"
@@ -31,19 +40,19 @@ func TestWithRollkitTestSuite(t *testing.T) {
 	suite.Run(t, new(RollkitTestSuite))
 }
 
-// TestBasic is an example test function that will be run by the test suite
-func (s *RollkitTestSuite) TestBasic() {
+// TestInitialize tests the initialization of the Rollkit client
+func (s *RollkitTestSuite) TestInitialize() {
 	ctx := context.Background()
 
 	s.SetupSuite(ctx)
 
-	// Add your test code here. For example, create a transfer channel between ChainA and ChainB:
+	// Store the contract code on ChainA via a governance proposal
 	s.Run("StoreContractCode", func() {
 		// Submit store contract code proposal on ChainA
 		// The contract code should be built in the CI/CD pipeline first
-		codeHash, err := s.ChainA.StoreClientContract(ctx, s.UserA.KeyName(), "../../artifacts/rollkit_ibc.wasm")
+		proposal := s.NewWasmClientProposal(ctx, s.ChainA, s.UserA, "../../artifacts/rollkit_ibc.wasm")
+		_, err := s.BroadcastMessages(ctx, s.ChainA, s.UserA, 60_000_000, proposal)
 		s.Require().NoError(err)
-		s.Require().NotEmpty(codeHash)
 
 		// vote on the proposal
 		err = s.ChainA.VoteOnProposalAllValidators(ctx, "1", cosmos.ProposalVoteYes)
@@ -60,4 +69,36 @@ func (s *RollkitTestSuite) TestBasic() {
 		})
 		s.Require().NoError(err)
 	})
+}
+
+// NewWasmClientProposal submits a new wasm client governance proposal to the chain.
+func (s *RollkitTestSuite) NewWasmClientProposal(ctx context.Context, chain *cosmos.CosmosChain, wallet ibc.Wallet, filePath string) *govv1.MsgSubmitProposal {
+	file, err := os.Open(filePath)
+	s.Require().NoError(err)
+
+	content, err := io.ReadAll(file)
+	s.Require().NoError(err)
+
+	// compress the wasm file since it is too large to submit as a proposal
+	var b bytes.Buffer
+	gz := gzip.NewWriter(&b)
+	_, err = gz.Write(content)
+	s.Require().NoError(err)
+	gz.Close()
+
+	message := &ibcwasmtypes.MsgStoreCode{
+		Signer:       s.GetModuleAddress(ctx, chain, govtypes.ModuleName),
+		WasmByteCode: b.Bytes(),
+	}
+
+	govProposal, err := govv1.NewMsgSubmitProposal(
+		[]sdk.Msg{message}, sdk.NewCoins(sdk.NewCoin(chain.Config().Denom, govv1.DefaultMinDepositTokens)),
+		s.UserA.FormattedAddress(), "metadata:e2e", "title:e2e", "summary:e2e", false,
+	)
+	s.Require().NoError(err)
+
+	// codeResp, err := query.GRPCQuery[wasmtypes.QueryCodeResponse](ctx, chain, &wasmtypes.QueryCodeRequest{Checksum: computedChecksum})
+	// s.Require().NoError(err)
+
+	return govProposal
 }
