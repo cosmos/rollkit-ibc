@@ -27,6 +27,7 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	ibcwasmtypes "github.com/cosmos/ibc-go/modules/light-clients/08-wasm/types"
 	icacontrollertypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/types"
 	icahosttypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/host/types"
 	feetypes "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/types"
@@ -44,7 +45,7 @@ import (
 
 // WasmEncodingConfig returns the global E2E encoding config for Wasm.
 func WasmEncodingConfig() *sdktestutil.TestEncodingConfig {
-	return encodingConfig("wasm")
+	return encodingConfig("cosmos")
 }
 
 // EncodingConfig returns the global E2E encoding config.
@@ -78,6 +79,7 @@ func encodingConfig(bech32Prefix string) *sdktestutil.TestEncodingConfig {
 	connectiontypes.RegisterInterfaces(interfaceRegistry)
 	ibctmtypes.RegisterInterfaces(interfaceRegistry)
 	localhost.RegisterInterfaces(interfaceRegistry)
+	ibcwasmtypes.RegisterInterfaces(interfaceRegistry)
 
 	// sdk types
 	upgradetypes.RegisterInterfaces(interfaceRegistry)

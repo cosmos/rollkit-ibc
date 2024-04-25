@@ -6,21 +6,21 @@ import (
 )
 
 var DefaultChainSpecs = []*interchaintest.ChainSpec{
-	// -- WASMD --
+	// -- 08-WASM SIMD --
 	{
 		ChainConfig: ibc.ChainConfig{
 			Type:    "cosmos",
-			Name:    "wasmd-1",
-			ChainID: "wasmd-1",
+			Name:    "simd-1",
+			ChainID: "simd-1",
 			Images: []ibc.DockerImage{
 				{
-					Repository: "cosmwasm/wasmd", // FOR LOCAL IMAGE USE: Docker Image Name
-					Version:    "v0.50.0",        // FOR LOCAL IMAGE USE: Docker Image Tag
+					Repository: "ghcr.io/cosmos/ibc-go-wasm-simd", // FOR LOCAL IMAGE USE: Docker Image Name
+					Version:    "v8.0.0-e2e-upgrade",              // FOR LOCAL IMAGE USE: Docker Image Tag
 					UidGid:     "1025:1025",
 				},
 			},
-			Bin:            "wasmd",
-			Bech32Prefix:   "wasm",
+			Bin:            "simd",
+			Bech32Prefix:   "cosmos",
 			Denom:          "stake",
 			GasPrices:      "0.00stake",
 			GasAdjustment:  1.3,
@@ -29,21 +29,21 @@ var DefaultChainSpecs = []*interchaintest.ChainSpec{
 			NoHostMount:    false,
 		},
 	},
-	// -- WASMD --
+	// -- 08-WASM SIMD --
 	{
 		ChainConfig: ibc.ChainConfig{
 			Type:    "cosmos",
-			Name:    "wasmd-2",
-			ChainID: "wasmd-2",
+			Name:    "simd-2",
+			ChainID: "simd-2",
 			Images: []ibc.DockerImage{
 				{
-					Repository: "cosmwasm/wasmd", // FOR LOCAL IMAGE USE: Docker Image Name
-					Version:    "v0.50.0",        // FOR LOCAL IMAGE USE: Docker Image Tag
+					Repository: "ghcr.io/cosmos/ibc-go-wasm-simd", // FOR LOCAL IMAGE USE: Docker Image Name
+					Version:    "v8.0.0-e2e-upgrade",              // FOR LOCAL IMAGE USE: Docker Image Tag
 					UidGid:     "1025:1025",
 				},
 			},
-			Bin:            "wasmd",
-			Bech32Prefix:   "wasm",
+			Bin:            "simd",
+			Bech32Prefix:   "cosmos",
 			Denom:          "stake",
 			GasPrices:      "0.00stake",
 			GasAdjustment:  1.3,
