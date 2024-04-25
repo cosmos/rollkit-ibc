@@ -1,10 +1,12 @@
 use ibc_client_tendermint::consensus_state::ConsensusState as TendermintConsensusState;
 use ibc_core::client::context::client_state::ClientStateExecution;
-use ibc_core::client::context::{Convertible, ExtClientValidationContext, ExtClientExecutionContext};
+use ibc_core::client::context::{
+    Convertible, ExtClientExecutionContext, ExtClientValidationContext,
+};
 use ibc_core::client::types::error::ClientError;
 use ibc_core::client::types::Height;
-use ibc_core::primitives::proto::Any;
 use ibc_core::host::types::identifiers::ClientId;
+use ibc_core::primitives::proto::Any;
 use ibc_core_host::types::path::{ClientConsensusStatePath, ClientStatePath};
 
 use crate::client_state::ClientState;
@@ -91,8 +93,14 @@ where
     ctx.store_consensus_state(
         ClientConsensusStatePath::new(
             client_id.clone(),
-            client_state.tendermint_client_state.latest_height.revision_number(),
-            client_state.tendermint_client_state.latest_height.revision_height(),
+            client_state
+                .tendermint_client_state
+                .latest_height
+                .revision_number(),
+            client_state
+                .tendermint_client_state
+                .latest_height
+                .revision_height(),
         ),
         tm_consensus_state.into(),
     )?;

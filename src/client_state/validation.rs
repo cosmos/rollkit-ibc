@@ -1,10 +1,10 @@
 use ibc_client_tendermint::consensus_state::ConsensusState as TendermintConsensusState;
 use ibc_core::client::context::client_state::ClientStateValidation;
 use ibc_core::client::context::{Convertible, ExtClientValidationContext};
-use ibc_core::client::types::Status;
 use ibc_core::client::types::error::ClientError;
-use ibc_core::primitives::proto::Any;
+use ibc_core::client::types::Status;
 use ibc_core::host::types::identifiers::ClientId;
+use ibc_core::primitives::proto::Any;
 
 use crate::client_state::ClientState;
 

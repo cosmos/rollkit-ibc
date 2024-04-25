@@ -1,12 +1,12 @@
 use ibc_client_tendermint::types::ClientState as TendermintClientState;
-use ibc_proto::ibc::lightclients::rollkit::v1::ClientState as RawClientState;
 use ibc_core::client::types::error::ClientError;
+use ibc_proto::ibc::lightclients::rollkit::v1::ClientState as RawClientState;
 
-use ibc_core::primitives::proto::{Any, Protobuf};
 use ibc_core::host::types::identifiers::ClientId;
+use ibc_core::primitives::proto::{Any, Protobuf};
 
-use crate::types::Error;
 use crate::client_state::DaParams;
+use crate::types::Error;
 
 pub const ROLLKIT_CLIENT_STATE_TYPE_URL: &str = "/ibc.lightclients.rollkit.v1.ClientState";
 
@@ -80,7 +80,7 @@ impl TryFrom<Any> for ClientState {
         }
 
         match raw.type_url.as_str() {
-          ROLLKIT_CLIENT_STATE_TYPE_URL => decode_client_state(&raw.value),
+            ROLLKIT_CLIENT_STATE_TYPE_URL => decode_client_state(&raw.value),
             _ => Err(ClientError::UnknownClientStateType {
                 client_state_type: raw.type_url,
             }),

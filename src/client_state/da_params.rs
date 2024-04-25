@@ -1,5 +1,5 @@
-use core::str::FromStr;
 use core::fmt::{Debug, Display, Error as FmtError, Formatter};
+use core::str::FromStr;
 
 use ibc_core::host::types::identifiers::ClientId;
 use ibc_core::primitives::proto::Protobuf;
@@ -25,8 +25,7 @@ impl Display for DaParams {
         write!(
             f,
             "DaParams {{ client_id: {}, fraud_period_window: {} }}",
-            &self.client_id,
-            &self.fraud_period_window,
+            &self.client_id, &self.fraud_period_window,
         )
     }
 }
@@ -56,7 +55,7 @@ impl From<DaParams> for RawDaParams {
     fn from(value: DaParams) -> Self {
         Self {
             client_id: value.client_id.to_string(),
-            fraud_period_window: value.fraud_period_window
+            fraud_period_window: value.fraud_period_window,
         }
     }
 }
