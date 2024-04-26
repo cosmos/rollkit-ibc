@@ -32,7 +32,7 @@ jobs:
       matrix:
         test:
           # List your tests here
-          - TestWithBasicTestSuite/TestBasic
+          - TestWithRollkitTestSuite/TestInitialize
     name: ${{ matrix.test }}
     runs-on: ubuntu-latest
     steps:
