@@ -1,4 +1,4 @@
-use ibc_client_tendermint::consensus_state::ConsensusState as TendermintConsensusState;
+use ibc_client_tendermint::types::ConsensusState as TendermintConsensusStateType;
 use ibc_core::client::context::client_state::ClientStateExecution;
 use ibc_core::client::context::{
     Convertible, ExtClientExecutionContext, ExtClientValidationContext,
@@ -15,7 +15,7 @@ impl<E> ClientStateExecution<E> for ClientState
 where
     E: ExtClientExecutionContext,
     E::ClientStateRef: From<ClientState>,
-    E::ConsensusStateRef: Convertible<TendermintConsensusState, ClientError>,
+    E::ConsensusStateRef: Convertible<TendermintConsensusStateType, ClientError>,
 {
     fn initialise(
         &self,
@@ -79,12 +79,12 @@ pub fn initialise<E>(
 where
     E: ExtClientExecutionContext,
     E::ClientStateRef: From<ClientState>,
-    E::ConsensusStateRef: Convertible<TendermintConsensusState, ClientError>,
+    E::ConsensusStateRef: Convertible<TendermintConsensusStateType, ClientError>,
 {
     let host_timestamp = ExtClientValidationContext::host_timestamp(ctx)?;
     let host_height = ExtClientValidationContext::host_height(ctx)?;
 
-    let tm_consensus_state = TendermintConsensusState::try_from(consensus_state)?;
+    let tm_consensus_state = TendermintConsensusStateType::try_from(consensus_state)?;
 
     ctx.store_client_state(
         ClientStatePath::new(client_id.clone()),
@@ -104,7 +104,7 @@ where
                 .latest_height
                 .revision_height(),
         ),
-        tm_consensus_state.into(),
+        E::ConsensusStateRef::from(tm_consensus_state),
     )?;
 
     ctx.store_update_meta(
