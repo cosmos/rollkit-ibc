@@ -10,8 +10,8 @@ use ibc_proto::ibc::lightclients::rollkit::v1::Header as RawRollkitHeader;
 use tendermint::crypto::Sha256;
 use tendermint::merkle::MerkleHash;
 
-use crate::types::DaData;
 use crate::types::Error;
+use crate::client_message::da_data::DaData;
 
 pub const ROLLKIT_HEADER_TYPE_URL: &str = "/ibc.lightclients.rollkit.v1.Header";
 

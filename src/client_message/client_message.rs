@@ -3,7 +3,8 @@ use ibc_client_tendermint::types::TENDERMINT_MISBEHAVIOUR_TYPE_URL;
 use ibc_core::primitives::proto::{Any, Protobuf};
 use prost::Message;
 
-use crate::types::{Error, Header, ROLLKIT_HEADER_TYPE_URL};
+use crate::types::Error;
+use crate::client_message::header::{Header, ROLLKIT_HEADER_TYPE_URL};
 
 /// Defines the union ClientMessage type allowing to submit all possible
 /// messages for updating clients or reporting misbehaviour.

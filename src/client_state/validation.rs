@@ -1,12 +1,20 @@
 use ibc_client_tendermint::consensus_state::ConsensusState as TendermintConsensusState;
+// use ibc_client_tendermint::types::ConsensusState as TmConsensusState;
+use ibc_client_tendermint::types::TENDERMINT_MISBEHAVIOUR_TYPE_URL;
 use ibc_core::client::context::client_state::ClientStateValidation;
 use ibc_core::client::context::{Convertible, ExtClientValidationContext};
 use ibc_core::client::types::error::ClientError;
 use ibc_core::client::types::Status;
 use ibc_core::host::types::identifiers::ClientId;
 use ibc_core::primitives::proto::Any;
+use tendermint::merkle::MerkleHash;
+use tendermint::crypto::default::Sha256;
+use tendermint::crypto::Sha256 as Sha256Trait;
+use tendermint_light_client_verifier::{ProdVerifier, Verifier};
 
 use crate::client_state::ClientState;
+use crate::client_message::Header;
+use crate::client_message::ROLLKIT_HEADER_TYPE_URL;
 
 impl<V> ClientStateValidation<V> for ClientState
 where
@@ -15,11 +23,17 @@ where
 {
     fn verify_client_message(
         &self,
-        _ctx: &V,
-        _client_id: &ClientId,
-        _client_message: Any,
+        ctx: &V,
+        client_id: &ClientId,
+        client_message: Any,
     ) -> Result<(), ClientError> {
-        unimplemented!("verify_client_message")
+        verify_client_message::<V, Sha256>(
+            self,
+            ctx,
+            client_id,
+            client_message,
+            &ProdVerifier::default()
+        )
     }
 
     fn check_for_misbehaviour(
@@ -37,5 +51,46 @@ where
 
     fn check_substitute(&self, _ctx: &V, _substitute_client_state: Any) -> Result<(), ClientError> {
         unimplemented!("verify_client_message")
+    }
+}
+
+/// Verify the client message as part of the client state validation process.
+///
+/// Note that this function is typically implemented as part of the
+/// [`ClientStateValidation`] trait, but has been made a standalone function in
+/// order to make the ClientState APIs more flexible. It mostly adheres to the
+/// same signature as the `ClientStateValidation::verify_client_message`
+/// function, except for an additional `verifier` parameter that allows users
+/// who require custom verification logic to easily pass in their own verifier
+/// implementation.
+pub fn verify_client_message<V, H>(
+    client_state: &ClientState,
+    ctx: &V,
+    client_id: &ClientId,
+    client_message: Any,
+    _verifier: &impl Verifier,
+) -> Result<(), ClientError>
+where
+    V: ExtClientValidationContext,
+    V::ConsensusStateRef: Convertible<TendermintConsensusState, ClientError>,
+    H: MerkleHash + Sha256Trait + Default,
+{
+    match client_message.type_url.as_str() {
+        ROLLKIT_HEADER_TYPE_URL => {
+            let header = Header::try_from(client_message)?; 
+            client_state.tendermint_client_state.verify_client_message(
+                ctx,
+                client_id,
+                Any::from(header.tendermint_header),
+            )
+        }
+        TENDERMINT_MISBEHAVIOUR_TYPE_URL => {
+            client_state.tendermint_client_state.verify_client_message(
+                ctx,
+                client_id,
+                client_message,
+            )
+        }
+        _ => Err(ClientError::InvalidUpdateClientMessage),
     }
 }
