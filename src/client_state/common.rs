@@ -29,7 +29,7 @@ impl ClientStateCommon for ClientState {
     }
 
     fn latest_height(&self) -> Height {
-        self.tendermint_client_state.latest_height
+        self.tendermint_client_state.inner().latest_height
     }
 
     fn validate_proof_height(&self, proof_height: Height) -> Result<(), ClientError> {
@@ -61,22 +61,22 @@ impl ClientStateCommon for ClientState {
 
     fn verify_membership(
         &self,
-        _prefix: &CommitmentPrefix,
-        _proof: &CommitmentProofBytes,
-        _root: &CommitmentRoot,
-        _path: Path,
-        _value: Vec<u8>,
+        prefix: &CommitmentPrefix,
+        proof: &CommitmentProofBytes,
+        root: &CommitmentRoot,
+        path: Path,
+        value: Vec<u8>,
     ) -> Result<(), ClientError> {
-        unimplemented!("verify_membership")
+        self.tendermint_client_state.verify_membership(prefix, proof, root, path, value)
     }
 
     fn verify_non_membership(
         &self,
-        _prefix: &CommitmentPrefix,
-        _proof: &CommitmentProofBytes,
-        _root: &CommitmentRoot,
-        _path: Path,
+        prefix: &CommitmentPrefix,
+        proof: &CommitmentProofBytes,
+        root: &CommitmentRoot,
+        path: Path,
     ) -> Result<(), ClientError> {
-        unimplemented!("verify_non_membership")
+        self.tendermint_client_state.verify_non_membership(prefix, proof, root, path)
     }
 }

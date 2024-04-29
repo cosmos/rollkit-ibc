@@ -95,10 +95,12 @@ where
             client_id.clone(),
             client_state
                 .tendermint_client_state
+                .inner()
                 .latest_height
                 .revision_number(),
             client_state
                 .tendermint_client_state
+                .inner()
                 .latest_height
                 .revision_height(),
         ),
@@ -107,7 +109,7 @@ where
 
     ctx.store_update_meta(
         client_id.clone(),
-        client_state.tendermint_client_state.latest_height,
+        client_state.tendermint_client_state.inner().latest_height,
         host_timestamp,
         host_height,
     )?;
