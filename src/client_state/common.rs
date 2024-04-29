@@ -67,7 +67,8 @@ impl ClientStateCommon for ClientState {
         path: Path,
         value: Vec<u8>,
     ) -> Result<(), ClientError> {
-        self.tendermint_client_state.verify_membership(prefix, proof, root, path, value)
+        self.tendermint_client_state
+            .verify_membership(prefix, proof, root, path, value)
     }
 
     fn verify_non_membership(
@@ -77,6 +78,7 @@ impl ClientStateCommon for ClientState {
         root: &CommitmentRoot,
         path: Path,
     ) -> Result<(), ClientError> {
-        self.tendermint_client_state.verify_non_membership(prefix, proof, root, path)
+        self.tendermint_client_state
+            .verify_non_membership(prefix, proof, root, path)
     }
 }

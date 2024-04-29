@@ -31,9 +31,7 @@ impl Display for DaData {
 
 impl DaData {
     pub fn new(shared_proof: Vec<u8>) -> Self {
-        Self {
-            shared_proof,
-        }
+        Self { shared_proof }
     }
 }
 
