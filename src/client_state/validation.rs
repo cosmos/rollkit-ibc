@@ -6,9 +6,6 @@ use ibc_core::client::types::error::ClientError;
 use ibc_core::client::types::Status;
 use ibc_core::host::types::identifiers::ClientId;
 use ibc_core::primitives::proto::Any;
-use tendermint::crypto::default::Sha256;
-use tendermint::crypto::Sha256 as Sha256Trait;
-use tendermint::merkle::MerkleHash;
 use tendermint_light_client_verifier::{ProdVerifier, Verifier};
 
 use crate::client_message::Header;
@@ -26,7 +23,7 @@ where
         client_id: &ClientId,
         client_message: Any,
     ) -> Result<(), ClientError> {
-        verify_client_message::<V, Sha256>(
+        verify_client_message::<V>(
             self,
             ctx,
             client_id,
@@ -62,7 +59,7 @@ where
 /// function, except for an additional `verifier` parameter that allows users
 /// who require custom verification logic to easily pass in their own verifier
 /// implementation.
-pub fn verify_client_message<V, H>(
+pub fn verify_client_message<V>(
     client_state: &ClientState,
     ctx: &V,
     client_id: &ClientId,
@@ -72,7 +69,6 @@ pub fn verify_client_message<V, H>(
 where
     V: ExtClientValidationContext,
     V::ConsensusStateRef: Convertible<TendermintConsensusStateType, ClientError>,
-    H: MerkleHash + Sha256Trait + Default,
 {
     match client_message.type_url.as_str() {
         ROLLKIT_HEADER_TYPE_URL => {
