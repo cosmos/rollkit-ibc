@@ -16,7 +16,7 @@ impl<V> ClientStateValidation<V> for ClientState
 where
     V: ExtClientValidationContext,
     TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
-    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>
+    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>,
 {
     fn verify_client_message(
         &self,
@@ -70,7 +70,7 @@ pub fn verify_client_message<V>(
 where
     V: ExtClientValidationContext,
     TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
-    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>
+    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>,
 {
     match client_message.type_url.as_str() {
         ROLLKIT_HEADER_TYPE_URL => {
@@ -87,7 +87,6 @@ where
         _ => Err(ClientError::InvalidUpdateClientMessage),
     }
 }
-
 
 /// Check for misbehaviour on the client state as part of the client state
 /// validation process.
@@ -130,7 +129,11 @@ pub fn check_for_misbehaviour<V>(
 where
     V: ExtClientValidationContext,
     TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
-    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>
+    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>,
 {
-    return client_state.tendermint_client_state.check_for_misbehaviour(ctx, client_id, client_message)
+    client_state.tendermint_client_state.check_for_misbehaviour(
+        ctx,
+        client_id,
+        client_message,
+    )
 }

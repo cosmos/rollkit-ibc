@@ -9,8 +9,8 @@ use ibc_core::host::types::identifiers::ClientId;
 use ibc_core::primitives::proto::Any;
 use ibc_core_host::types::path::{ClientConsensusStatePath, ClientStatePath};
 
-use crate::client_state::ClientState;
 use crate::client_message::Header;
+use crate::client_state::ClientState;
 
 impl<E> ClientStateExecution<E> for ClientState
 where
@@ -18,7 +18,7 @@ where
     E::ClientStateRef: From<ClientState>,
     E::ClientStateMut: From<ibc_client_tendermint::types::ClientState>,
     TendermintConsensusStateType: Convertible<E::ConsensusStateRef>,
-    ClientError: From<<TendermintConsensusStateType as TryFrom<E::ConsensusStateRef>>::Error>
+    ClientError: From<<TendermintConsensusStateType as TryFrom<E::ConsensusStateRef>>::Error>,
 {
     fn initialise(
         &self,
@@ -84,7 +84,7 @@ where
     E: ExtClientExecutionContext,
     E::ClientStateRef: From<ClientState>,
     TendermintConsensusStateType: Convertible<E::ConsensusStateRef>,
-    ClientError: From<<TendermintConsensusStateType as TryFrom<E::ConsensusStateRef>>::Error>
+    ClientError: From<<TendermintConsensusStateType as TryFrom<E::ConsensusStateRef>>::Error>,
 {
     let host_timestamp = ExtClientValidationContext::host_timestamp(ctx)?;
     let host_height = ExtClientValidationContext::host_height(ctx)?;
@@ -92,7 +92,9 @@ where
     let tendermint_consensus_state: TendermintConsensusStateType = consensus_state
         .clone()
         .try_into()
-        .map_err(|_: ClientError| ClientError::UnknownConsensusStateType { consensus_state_type:consensus_state.type_url })?;
+        .map_err(|_: ClientError| ClientError::UnknownConsensusStateType {
+            consensus_state_type: consensus_state.type_url,
+        })?;
 
     ctx.store_client_state(
         ClientStatePath::new(client_id.clone()),
@@ -145,7 +147,7 @@ where
     ClientError: From<<TendermintConsensusStateType as TryFrom<E::ConsensusStateRef>>::Error>,
 {
     let header = Header::try_from(header)?;
-    return client_state.tendermint_client_state.update_state(
+    client_state.tendermint_client_state.update_state(
         ctx,
         client_id,
         Any::from(header.tendermint_header),

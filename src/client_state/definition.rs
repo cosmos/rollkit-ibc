@@ -1,7 +1,7 @@
-use ibc_core::client::types::Height;
 use ibc_client_tendermint::client_state::ClientState as TendermintClientState;
 use ibc_client_tendermint::types::ClientState as TendermintClientStateType;
 use ibc_core::client::types::error::ClientError;
+use ibc_core::client::types::Height;
 use ibc_proto::ibc::lightclients::rollkit::v1::ClientState as RawClientState;
 
 use ibc_core::host::types::identifiers::ClientId;
@@ -29,16 +29,25 @@ impl ClientState {
     }
 
     pub fn da_client_id(&self) -> Option<ClientId> {
-        self.da_params.as_ref().map(|da_params| da_params.client_id.clone())
+        self.da_params
+            .as_ref()
+            .map(|da_params| da_params.client_id.clone())
     }
 
     pub fn da_fraud_period_window(&self) -> Option<u64> {
-        self.da_params.as_ref().map(|da_params| da_params.fraud_period_window)
+        self.da_params
+            .as_ref()
+            .map(|da_params| da_params.fraud_period_window)
     }
 
     pub fn with_frozen_height(self, h: Height) -> Self {
         Self {
-            tendermint_client_state: self.tendermint_client_state.inner().clone().with_frozen_height(h).into(),
+            tendermint_client_state: self
+                .tendermint_client_state
+                .inner()
+                .clone()
+                .with_frozen_height(h)
+                .into(),
             ..self
         }
     }
@@ -68,7 +77,7 @@ impl From<ClientState> for RawClientState {
     fn from(value: ClientState) -> Self {
         Self {
             tendermint_client_state: Some(value.tendermint_client_state.into()),
-            da_params: value.da_params.map(|da_params|da_params.into()),
+            da_params: value.da_params.map(|da_params| da_params.into()),
         }
     }
 }
