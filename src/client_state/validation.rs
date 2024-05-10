@@ -15,7 +15,8 @@ use crate::client_state::ClientState;
 impl<V> ClientStateValidation<V> for ClientState
 where
     V: ExtClientValidationContext,
-    V::ConsensusStateRef: Convertible<TendermintConsensusStateType, ClientError>,
+    TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
+    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>
 {
     fn verify_client_message(
         &self,
@@ -34,11 +35,11 @@ where
 
     fn check_for_misbehaviour(
         &self,
-        _ctx: &V,
-        _client_id: &ClientId,
-        _client_message: Any,
+        ctx: &V,
+        client_id: &ClientId,
+        client_message: Any,
     ) -> Result<bool, ClientError> {
-        unimplemented!("verify_client_message")
+        check_for_misbehaviour(self, ctx, client_id, client_message)
     }
 
     fn status(&self, _ctx: &V, _client_id: &ClientId) -> Result<Status, ClientError> {
@@ -68,7 +69,8 @@ pub fn verify_client_message<V>(
 ) -> Result<(), ClientError>
 where
     V: ExtClientValidationContext,
-    V::ConsensusStateRef: Convertible<TendermintConsensusStateType, ClientError>,
+    TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
+    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>
 {
     match client_message.type_url.as_str() {
         ROLLKIT_HEADER_TYPE_URL => {
@@ -84,4 +86,51 @@ where
             .verify_client_message(ctx, client_id, client_message),
         _ => Err(ClientError::InvalidUpdateClientMessage),
     }
+}
+
+
+/// Check for misbehaviour on the client state as part of the client state
+/// validation process.
+///
+/// Note that this function is typically implemented as part of the
+/// [`ClientStateValidation`] trait, but has been made a standalone function
+/// in order to make the ClientState APIs more flexible.
+///
+/// This method covers the following cases:
+///
+/// 1 - fork:
+/// Assumes at least one consensus state before the fork point exists. Let
+/// existing consensus states on chain B be: [Sn,.., Sf, Sf-1, S0] with
+/// `Sf-1` being the most recent state before fork. Chain A is queried for a
+/// header `Hf'` at `Sf.height` and if it is different than the `Hf` in the
+/// event for the client update (the one that has generated `Sf` on chain),
+/// then the two headers are included in the evidence and submitted. Note
+/// that in this case the headers are different but have the same height.
+///
+/// 2 - BFT time violation for unavailable header (a.k.a. Future Lunatic
+/// Attack or FLA):
+/// Some header with a height that is higher than the latest height on A has
+/// been accepted and a consensus state was created on B. Note that this
+/// implies that the timestamp of this header must be within the
+/// `clock_drift` of the client. Assume the client on B has been updated
+/// with `h2`(not present on/ produced by chain A) and it has a timestamp of
+/// `t2` that is at most `clock_drift` in the future. Then the latest header
+/// from A is fetched, let it be `h1`, with a timestamp of `t1`. If `t1 >=
+/// t2` then evidence of misbehavior is submitted to A.
+///
+/// 3 - BFT time violation for existing headers:
+/// Ensure that consensus state times are monotonically increasing with
+/// height.
+pub fn check_for_misbehaviour<V>(
+    client_state: &ClientState,
+    ctx: &V,
+    client_id: &ClientId,
+    client_message: Any,
+) -> Result<bool, ClientError>
+where
+    V: ExtClientValidationContext,
+    TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
+    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>
+{
+    return client_state.tendermint_client_state.check_for_misbehaviour(ctx, client_id, client_message)
 }

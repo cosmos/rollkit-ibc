@@ -14,8 +14,8 @@ use crate::client_state::{rollkit_client_type, ClientState};
 
 impl ClientStateCommon for ClientState {
     fn verify_consensus_state(&self, consensus_state: Any) -> Result<(), ClientError> {
-        let tm_consensus_state = ConsensusState::try_from(consensus_state)?;
-        if tm_consensus_state.root().is_empty() {
+        let tendermint_consensus_state = ConsensusState::try_from(consensus_state)?;
+        if tendermint_consensus_state.root().is_empty() {
             return Err(ClientError::Other {
                 description: "empty commitment root".into(),
             });
