@@ -131,11 +131,9 @@ where
     TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
     ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>,
 {
-    client_state.tendermint_client_state.check_for_misbehaviour(
-        ctx,
-        client_id,
-        client_message,
-    )
+    client_state
+        .tendermint_client_state
+        .check_for_misbehaviour(ctx, client_id, client_message)
 }
 
 /// Query the status of the client state.
@@ -173,5 +171,7 @@ where
     ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>,
 {
     // TODO: discuss if da params are allowed to differ.
-    subject_client_state.tendermint_client_state.check_substitute(ctx, substitute_client_state)
+    subject_client_state
+        .tendermint_client_state
+        .check_substitute(ctx, substitute_client_state)
 }

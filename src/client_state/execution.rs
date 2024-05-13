@@ -2,7 +2,7 @@ use ibc_client_tendermint::types::ClientState as TendermintClientStateType;
 use ibc_client_tendermint::types::ConsensusState as TendermintConsensusStateType;
 use ibc_core::client::context::client_state::{ClientStateCommon, ClientStateExecution};
 use ibc_core::client::context::{
-    Convertible, ClientExecutionContext, ExtClientExecutionContext, ExtClientValidationContext,
+    ClientExecutionContext, Convertible, ExtClientExecutionContext, ExtClientValidationContext,
 };
 use ibc_core::client::types::error::ClientError;
 use ibc_core::client::types::Height;
@@ -183,7 +183,8 @@ where
         let host_timestamp = ExtClientValidationContext::host_timestamp(ctx)?;
         let host_height = ExtClientValidationContext::host_height(ctx)?;
 
-        let new_tendermint_consensus_state = TendermintConsensusStateType::from(rollkit_header.tendermint_header.clone());
+        let new_tendermint_consensus_state =
+            TendermintConsensusStateType::from(rollkit_header.tendermint_header.clone());
         let new_rollkit_client_state = client_state.clone().with_header(rollkit_header)?;
 
         ctx.store_consensus_state(
@@ -314,10 +315,14 @@ where
     TendermintConsensusStateType: Convertible<E::ConsensusStateRef>,
 {
     let upgraded_rollkit_client_state = ClientState::try_from(upgraded_client_state)?;
-    let upgraded_tendermint_consensus_state: TendermintConsensusStateType = upgraded_consensus_state.try_into()?;
+    let upgraded_tendermint_consensus_state: TendermintConsensusStateType =
+        upgraded_consensus_state.try_into()?;
 
     let tendermint_client_state = client_state.tendermint_client_state.inner();
-    let upgraded_tendermint_client_state = upgraded_rollkit_client_state.tendermint_client_state.inner().clone();
+    let upgraded_tendermint_client_state = upgraded_rollkit_client_state
+        .tendermint_client_state
+        .inner()
+        .clone();
 
     let new_tendermint_client_state = TendermintClientStateType::new(
         upgraded_tendermint_client_state.chain_id,
@@ -411,11 +416,15 @@ where
     E::ClientStateRef: From<ClientState>,
     TendermintConsensusStateType: Convertible<E::ConsensusStateRef>,
 {
-    let subject_tendermint_client_state = subject_client_state.tendermint_client_state.inner().clone();
+    let subject_tendermint_client_state =
+        subject_client_state.tendermint_client_state.inner().clone();
 
     let substitute_rollkit_client_state = ClientState::try_from(substitute_client_state)?;
-    let substitute_tendermint_client_state = substitute_rollkit_client_state.tendermint_client_state.inner().clone();
-    
+    let substitute_tendermint_client_state = substitute_rollkit_client_state
+        .tendermint_client_state
+        .inner()
+        .clone();
+
     // tendermint client state parameters that are allowed to change
     let chain_id = substitute_tendermint_client_state.chain_id;
     let trusting_period = substitute_tendermint_client_state.trusting_period;
@@ -439,7 +448,8 @@ where
     let host_timestamp = E::host_timestamp(ctx)?;
     let host_height = E::host_height(ctx)?;
 
-    let tendermint_consensus_state: TendermintConsensusStateType = substitute_consensus_state.try_into()?;
+    let tendermint_consensus_state: TendermintConsensusStateType =
+        substitute_consensus_state.try_into()?;
 
     ctx.store_consensus_state(
         ClientConsensusStatePath::new(

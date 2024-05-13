@@ -22,10 +22,13 @@ pub struct ClientState {
 }
 
 impl ClientState {
-    pub fn new(tendermint_client_state: TendermintClientState, da_params: Option<DaParams>) -> Self {
+    pub fn new(
+        tendermint_client_state: TendermintClientState,
+        da_params: Option<DaParams>,
+    ) -> Self {
         Self {
             tendermint_client_state,
-            da_params: da_params,
+            da_params,
         }
     }
 
@@ -44,14 +47,17 @@ impl ClientState {
     pub fn with_header(self, header: RollkitHeader) -> Result<Self, Error> {
         let tendermint_header = header.tendermint_header;
 
-        match self.tendermint_client_state.inner().clone().with_header(tendermint_header) {
+        match self
+            .tendermint_client_state
+            .inner()
+            .clone()
+            .with_header(tendermint_header)
+        {
             Err(e) => Err(Error::invalid(e.to_string())),
-            Ok(tendermint_client_state) => {
-                Ok(Self {
-                    tendermint_client_state: tendermint_client_state.into(),
-                    ..self
-                })
-            }
+            Ok(tendermint_client_state) => Ok(Self {
+                tendermint_client_state: tendermint_client_state.into(),
+                ..self
+            }),
         }
     }
 

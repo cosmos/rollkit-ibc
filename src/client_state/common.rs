@@ -15,7 +15,8 @@ use crate::client_state::{rollkit_client_type, ClientState};
 
 impl ClientStateCommon for ClientState {
     fn verify_consensus_state(&self, consensus_state: Any) -> Result<(), ClientError> {
-        self.tendermint_client_state.verify_consensus_state(consensus_state)
+        self.tendermint_client_state
+            .verify_consensus_state(consensus_state)
     }
 
     fn client_type(&self) -> ClientType {
@@ -27,7 +28,8 @@ impl ClientStateCommon for ClientState {
     }
 
     fn validate_proof_height(&self, proof_height: Height) -> Result<(), ClientError> {
-        self.tendermint_client_state.validate_proof_height(proof_height)
+        self.tendermint_client_state
+            .validate_proof_height(proof_height)
     }
 
     fn verify_upgrade_client(
@@ -113,7 +115,11 @@ pub fn verify_upgrade_client(
     // TODO: is it ok if we use the upgrade path from the tendermint client state?
     // TODO: is it ok that in the tendermint upgrade path the chain commits to a rollkit client state?
     // Check to see if the upgrade path is set
-    let mut upgrade_path = client_state.tendermint_client_state.inner().upgrade_path.clone();
+    let mut upgrade_path = client_state
+        .tendermint_client_state
+        .inner()
+        .upgrade_path
+        .clone();
 
     if upgrade_path.pop().is_none() {
         return Err(ClientError::ClientSpecific {
@@ -128,7 +134,7 @@ pub fn verify_upgrade_client(
 
     // Verify the proof of the upgraded client state
     verify_membership(
-        &client_state,
+        client_state,
         &upgrade_path_prefix,
         &proof_upgrade_client,
         root,
@@ -138,7 +144,7 @@ pub fn verify_upgrade_client(
 
     // Verify the proof of the upgraded consensus state
     verify_membership(
-        &client_state,
+        client_state,
         &upgrade_path_prefix,
         &proof_upgrade_consensus_state,
         root,
