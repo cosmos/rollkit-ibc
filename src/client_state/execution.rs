@@ -102,6 +102,7 @@ where
     let host_timestamp = ExtClientValidationContext::host_timestamp(ctx)?;
     let host_height = ExtClientValidationContext::host_height(ctx)?;
 
+    // TODO: is there a better way to handle this error? I tried `try_into` but it didn't work.
     let tendermint_consensus_state: TendermintConsensusStateType = consensus_state
         .clone()
         .try_into()
@@ -235,7 +236,7 @@ where
             height.revision_height(),
         );
         let consensus_state = ctx.consensus_state(&client_consensus_state_path)?;
-        let tm_consensus_state: TendermintConsensusStateType =
+        let tendermint_consensus_state: TendermintConsensusStateType =
             consensus_state.try_into().map_err(Into::into)?;
 
         let host_timestamp =
@@ -245,8 +246,8 @@ where
                     description: String::from("host timestamp is not a valid TM timestamp"),
                 })?;
 
-        let tm_consensus_state_timestamp = tm_consensus_state.timestamp();
-        let tm_consensus_state_expiry = (tm_consensus_state_timestamp
+        let tendermint_consensus_state_timestamp = tendermint_consensus_state.timestamp();
+        let tendermint_consensus_state_expiry = (tendermint_consensus_state_timestamp
             + client_state.tendermint_client_state.inner().trusting_period)
             .map_err(|_| ClientError::Other {
                 description: String::from(
@@ -254,7 +255,7 @@ where
                 ),
             })?;
 
-        if tm_consensus_state_expiry > host_timestamp {
+        if tendermint_consensus_state_expiry > host_timestamp {
             break;
         }
 
@@ -361,7 +362,7 @@ where
     // the root is empty. The next consensus state submitted using update
     // will be usable for packet-verification.
     let sentinel_root = b"sentinel_root".to_vec();
-    let new_consensus_state = TendermintConsensusStateType::new(
+    let new_tendermint_consensus_state = TendermintConsensusStateType::new(
         sentinel_root.into(),
         upgraded_tendermint_consensus_state.timestamp(),
         upgraded_tendermint_consensus_state.next_validators_hash,
@@ -381,7 +382,7 @@ where
             latest_height.revision_number(),
             latest_height.revision_height(),
         ),
-        new_consensus_state.into(),
+        new_tendermint_consensus_state.into(),
     )?;
     ctx.store_update_meta(
         client_id.clone(),
@@ -448,7 +449,7 @@ where
     let host_timestamp = E::host_timestamp(ctx)?;
     let host_height = E::host_height(ctx)?;
 
-    let tendermint_consensus_state: TendermintConsensusStateType =
+    let substitute_tendermint_consensus_state: TendermintConsensusStateType =
         substitute_consensus_state.try_into()?;
 
     ctx.store_consensus_state(
@@ -457,7 +458,7 @@ where
             new_rollkit_client_state.latest_height().revision_number(),
             new_rollkit_client_state.latest_height().revision_height(),
         ),
-        tendermint_consensus_state.into(),
+        substitute_tendermint_consensus_state.into(),
     )?;
 
     ctx.store_client_state(

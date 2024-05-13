@@ -100,15 +100,15 @@ pub fn verify_upgrade_client(
     TendermintConsensusState::try_from(upgraded_consensus_state.clone())?;
 
     let latest_height = client_state.latest_height();
-    let upgraded_tendermint_client_state_height = upgraded_rollkit_client_state.latest_height();
+    let upgraded_client_state_height = upgraded_rollkit_client_state.latest_height();
 
     // Make sure the latest height of the current client is not greater then
     // the upgrade height This condition checks both the revision number and
     // the height
-    if latest_height >= upgraded_tendermint_client_state_height {
+    if latest_height >= upgraded_client_state_height {
         Err(UpgradeClientError::LowUpgradeHeight {
             upgraded_height: latest_height,
-            client_height: upgraded_tendermint_client_state_height,
+            client_height: upgraded_client_state_height,
         })?
     }
 

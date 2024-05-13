@@ -18,7 +18,7 @@ message ClientState {
   ];
 }
 
-// DaParams defines the data-availability related parameters of a Rollkit rollup light.
+// DaParams defines the data-availability related parameters of a Rollkit rollup light client.
 message DaParams {
   // client ID of the DA light client
   string client_id = 1;
