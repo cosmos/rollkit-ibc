@@ -37,18 +37,16 @@ optimize = """docker run --rm -v "$(pwd)":/code \
 
 [dependencies]
 base64 = "0.22.0"
-cosmwasm-schema = "1.5.2"
-cosmwasm-std 	  = "1.5.2"
-ibc-core = { git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
-ibc-client-tendermint = {  git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false, features = ["schema"] }
-ibc-client-cw = {git = "https://github.com/cosmos/ibc-rs.git", rev = "80b8084", default-features = false }
-ibc-proto = { version = "0.42.2", default-features = false }
-prost = "0.12.3"
-tendermint = "0.34.1"
-tendermint-light-client-verifier = "0.34.1"
+cosmwasm-schema = "1.5.4"
+cosmwasm-std 	  = "1.5.4"
+ibc-core = { git = "https://github.com/cosmos/ibc-rs.git", rev = "4ea4dcb", default-features = false, features = ["schema"] }
+ibc-core-host = { git = "https://github.com/cosmos/ibc-rs.git", rev = "4ea4dcb", default-features = false, features = ["schema"] }
+ibc-client-tendermint = { git = "https://github.com/cosmos/ibc-rs.git", rev = "4ea4dcb", default-features = false, features = ["schema"] }
+ibc-client-cw = { git = "https://github.com/cosmos/ibc-rs.git", rev = "4ea4dcb", default-features = false }
+ibc-proto = { version = "0.44.0", default-features = false }
+prost = "0.12.4"
+tendermint = "0.36.0"
+tendermint-light-client-verifier = "0.36.0"
 
 [patch.crates-io]
-ibc-proto = { git = "https://github.com/cosmos/ibc-proto-rs.git", rev = "6cbe4c7ace5a688bc98831fa9c1cc2dabf3b2976", default-features = false } # "0.42.2"
-
-[dev-dependencies]
-cw-multi-test = "2.0.0"
+ibc-proto = { git = "https://github.com/cosmos/ibc-proto-rs.git", rev = "a70f7e9cc896c1a707a907e09ec340771a50c326", default-features = false } # "0.42.2"
