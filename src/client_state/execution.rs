@@ -97,18 +97,12 @@ where
     E: ExtClientExecutionContext,
     E::ClientStateRef: From<ClientState>,
     TendermintConsensusStateType: Convertible<E::ConsensusStateRef>,
-    ClientError: From<<TendermintConsensusStateType as TryFrom<E::ConsensusStateRef>>::Error>,
 {
     let host_timestamp = ExtClientValidationContext::host_timestamp(ctx)?;
     let host_height = ExtClientValidationContext::host_height(ctx)?;
 
-    // TODO: is there a better way to handle this error? I tried `try_into` but it didn't work.
-    let tendermint_consensus_state: TendermintConsensusStateType = consensus_state
-        .clone()
-        .try_into()
-        .map_err(|_: ClientError| ClientError::UnknownConsensusStateType {
-            consensus_state_type: consensus_state.type_url,
-        })?;
+    let tendermint_consensus_state: TendermintConsensusStateType =
+        consensus_state.clone().try_into()?;
 
     ctx.store_client_state(
         ClientStatePath::new(client_id.clone()),
