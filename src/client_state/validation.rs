@@ -42,12 +42,12 @@ where
         check_for_misbehaviour(self, ctx, client_id, client_message)
     }
 
-    fn status(&self, _ctx: &V, _client_id: &ClientId) -> Result<Status, ClientError> {
-        unimplemented!("verify_client_message")
+    fn status(&self, ctx: &V, client_id: &ClientId) -> Result<Status, ClientError> {
+        status(self, ctx, client_id)
     }
 
-    fn check_substitute(&self, _ctx: &V, _substitute_client_state: Any) -> Result<(), ClientError> {
-        unimplemented!("verify_client_message")
+    fn check_substitute(&self, ctx: &V, substitute_client_state: Any) -> Result<(), ClientError> {
+        check_substitute::<V>(self, ctx, substitute_client_state)
     }
 }
 
@@ -136,4 +136,42 @@ where
         client_id,
         client_message,
     )
+}
+
+/// Query the status of the client state.
+///
+/// Note that this function is typically implemented as part of the
+/// [`ClientStateValidation`] trait, but has been made a standalone function
+/// in order to make the ClientState APIs more flexible.
+pub fn status<V>(
+    client_state: &ClientState,
+    ctx: &V,
+    client_id: &ClientId,
+) -> Result<Status, ClientError>
+where
+    V: ExtClientValidationContext,
+    TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
+    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>,
+{
+    client_state.tendermint_client_state.status(ctx, client_id)
+}
+
+/// Check that the subject and substitute client states match as part of
+/// the client recovery validation step.
+///
+/// The subject and substitute client states match if all their respective
+/// client state parameters match except for frozen height, latest height,
+/// trusting period, and chain ID.
+pub fn check_substitute<V>(
+    subject_client_state: &ClientState,
+    ctx: &V,
+    substitute_client_state: Any,
+) -> Result<(), ClientError>
+where
+    V: ExtClientValidationContext,
+    TendermintConsensusStateType: Convertible<V::ConsensusStateRef>,
+    ClientError: From<<TendermintConsensusStateType as TryFrom<V::ConsensusStateRef>>::Error>,
+{
+    // TODO: discuss if da params are allowed to differ.
+    subject_client_state.tendermint_client_state.check_substitute(ctx, substitute_client_state)
 }

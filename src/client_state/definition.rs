@@ -7,6 +7,7 @@ use ibc_proto::ibc::lightclients::rollkit::v1::ClientState as RawClientState;
 use ibc_core::host::types::identifiers::ClientId;
 use ibc_core::primitives::proto::{Any, Protobuf};
 
+use crate::client_message::Header as RollkitHeader;
 use crate::client_state::DaParams;
 use crate::types::Error;
 
@@ -21,10 +22,10 @@ pub struct ClientState {
 }
 
 impl ClientState {
-    pub fn new(tendermint_client_state: TendermintClientState, da_params: DaParams) -> Self {
+    pub fn new(tendermint_client_state: TendermintClientState, da_params: Option<DaParams>) -> Self {
         Self {
             tendermint_client_state,
-            da_params: Some(da_params),
+            da_params: da_params,
         }
     }
 
@@ -40,6 +41,20 @@ impl ClientState {
             .map(|da_params| da_params.fraud_period_window)
     }
 
+    pub fn with_header(self, header: RollkitHeader) -> Result<Self, Error> {
+        let tendermint_header = header.tendermint_header;
+
+        match self.tendermint_client_state.inner().clone().with_header(tendermint_header) {
+            Err(e) => Err(Error::invalid(e.to_string())),
+            Ok(tendermint_client_state) => {
+                Ok(Self {
+                    tendermint_client_state: tendermint_client_state.into(),
+                    ..self
+                })
+            }
+        }
+    }
+
     pub fn with_frozen_height(self, h: Height) -> Self {
         Self {
             tendermint_client_state: self
@@ -50,6 +65,15 @@ impl ClientState {
                 .into(),
             ..self
         }
+    }
+
+    // Resets custom fields to zero values (used in `update_client`)
+    pub fn zero_custom_fields(&mut self) {
+        let mut tendermint_client_state = self.tendermint_client_state.inner().clone();
+        tendermint_client_state.zero_custom_fields();
+
+        self.tendermint_client_state = tendermint_client_state.into();
+        self.da_params = None;
     }
 }
 
@@ -64,10 +88,10 @@ impl TryFrom<RawClientState> for ClientState {
             .ok_or(Error::missing("tendermint_client_state"))?
             .try_into()?;
 
-        let da_params = raw
-            .da_params
-            .ok_or(Error::missing("da_params"))?
-            .try_into()?;
+        let da_params = match raw.da_params {
+            None => None,
+            Some(da_params) => Some(da_params.try_into()?),
+        };
 
         Ok(Self::new(tendermint_client_state, da_params))
     }
