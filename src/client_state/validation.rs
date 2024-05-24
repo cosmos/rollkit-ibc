@@ -1,11 +1,16 @@
+use cosmwasm_std::{Binary, Empty, QuerierWrapper, QueryRequest};
+
 use ibc_client_tendermint::types::ConsensusState as TendermintConsensusStateType;
 use ibc_client_tendermint::types::TENDERMINT_MISBEHAVIOUR_TYPE_URL;
 use ibc_core::client::context::client_state::ClientStateValidation;
 use ibc_core::client::context::{Convertible, ExtClientValidationContext};
 use ibc_core::client::types::error::ClientError;
-use ibc_core::client::types::Status;
+use ibc_core::client::types::{Status, Height};
+use ibc_core::commitment_types::proto::v1::MerklePath;
 use ibc_core::host::types::identifiers::ClientId;
 use ibc_core::primitives::proto::Any;
+use ibc_core::primitives::ToVec;
+use ibc_proto::ibc::core::client::v1::{QueryVerifyMembershipRequest, QueryVerifyMembershipResponse};
 use tendermint_light_client_verifier::{ProdVerifier, Verifier};
 
 use crate::client_message::Header;
@@ -75,6 +80,13 @@ where
     match client_message.type_url.as_str() {
         ROLLKIT_HEADER_TYPE_URL => {
             let header = Header::try_from(client_message)?;
+
+            let verified = query_verify_membermship_da(
+                ctx.querier(), // TODO: where do we get the querier from?
+                client_id.clone(),
+                header.da_data.shared_proof,
+            )?;
+
             client_state.tendermint_client_state.verify_client_message(
                 ctx,
                 client_id,
@@ -86,6 +98,36 @@ where
             .verify_client_message(ctx, client_id, client_message),
         _ => Err(ClientError::InvalidUpdateClientMessage),
     }
+}
+
+ /// Queries the DA light client to verify the membership proof.
+ pub fn query_verify_membermship_da(
+    querier: &QuerierWrapper<Empty>,
+    client_id: ClientId,
+    height: Option<Height>,
+	delay_time_period: u64,
+	delay_block_period: u64,
+	merkle_path: Option<MerklePath>,
+	value: Vec<u8>,
+    proof: Vec<u8>,
+) -> Result<bool, ClientError> {
+    // TODO: where do we get proof height, value and merkle path from?
+    let request = QueryVerifyMembershipRequest {
+        client_id: client_id.into(),
+        proof: proof,
+        proof_height: None,
+        merkle_path: None,
+        value: vec![],
+        time_delay: 0,
+        block_delay: 0,
+    };
+    let query: QueryRequest<Empty> = QueryRequest::Stargate {
+        path: "/ibc.core.client.v1.Query/VerifyMembership".into(),
+        data: Binary(request.to_vec()),
+    };
+
+    let response: QueryVerifyMembershipResponse = querier.query(&query).map_err(ClientError::);
+    Ok(response.success)
 }
 
 /// Check for misbehaviour on the client state as part of the client state
